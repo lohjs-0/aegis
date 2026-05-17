@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÆGIS</title>
+<link rel="icon" type="image/png" href="/public/aegis2.png">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="/css/estudos.css">
+<link rel="stylesheet" href="/css/aegis-mobile-nav.css">
+<link rel="stylesheet" href="/css/mobile-overflow-fix.css">
+<link rel="stylesheet" href="/css/missions-mobile-fix.css">
+<link rel="stylesheet" href="/css/simulados.css">
+</head>
+<body>
+
+<div class="bin-bg" id="binBg"></div>
+<div class="lm-backdrop" id="lmBackdrop"></div>
+
+<!-- ═══════════════════════════════════════════
+     LOKI ATTACK MODAL
+═══════════════════════════════════════════ -->
+<div id="lokiModal">
+  <div class="lm-scanline"></div>
+  <div class="lm-header">
+    <div class="lm-avatar">☽</div>
+    <div class="lm-title-block">
+      <div class="lm-title">LOKI'S SHADOWS</div>
+      <div class="lm-sub">// intrusão — responda agora, Guardião</div>
+    </div>
+    <div class="lm-badge"><span class="sdot r" style="margin-right:4px;"></span>AO VIVO</div>
+  </div>
+  <div class="lm-timer-wrap">
+    <div class="lm-timer-label"><span>// tempo para defender</span><span id="timerCount">15s</span></div>
+    <div class="timer-track"><div class="timer-fill" id="timerFill"></div></div>
+  </div>
+  <div class="lm-taunt" id="lmTaunt">...</div>
+  <div class="lm-payload-section" id="lmPayloadSec">
+    <div class="lm-payload-label">// PAYLOAD INJETADO</div>
+    <div class="lm-payload" id="lmPayload">...</div>
+  </div>
+  <div class="lm-choices-section" id="lmChoicesSec">
+    <div class="lm-choices-label">// ESCOLHA SUA DEFESA — salve o ÆGIS</div>
+    <div id="lmChoices"></div>
+  </div>
+  <div class="lm-result" id="lmResult">
+    <div class="lm-result-icon" id="lmResIcon"></div>
+    <div class="lm-result-title" id="lmResTitle"></div>
+    <div class="lm-result-msg" id="lmResMsg"></div>
+    <button class="lm-close-btn" id="lmCloseBtn" onclick="closeLokiModal()">[ continuar ]</button>
+  </div>
+</div>
+
+<div id="mob-overlay"></div>
+
+<!-- ═══════════════════════════════════════════
+     MAIN LAYOUT
+═══════════════════════════════════════════ -->
+<div class="wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-row">
+        <img src="/public/aegis-logo.png" alt="ÆGIS Logo" class="sidebar-logo-img" />
+        <div class="brand">ÆGIS</div>
+      </div>
+      <div class="tagline">> security training platform</div>
+    </div>
+
+    <a class="nav-item" data-section="home" href="#" onclick="event.preventDefault(); navigate('home')">
+      ⌂ [ home ]
+    </a>
+    <a class="nav-item" data-section="missoes" href="#" onclick="event.preventDefault(); navigate('missoes')">
+      ⊞ [ missões ]
+      <span class="nav-badge">01</span>
+    </a>
+    <a class="nav-item" data-section="estudos" href="#" onclick="event.preventDefault(); navigate('estudos')">
+      ◈ [ estudos ]
+    </a>
+    <a class="nav-item" data-section="flashcards" href="#" onclick="event.preventDefault(); navigate('flashcards')">
+      ⚡ [ flashcards ]
+      <span class="nav-badge">6</span>
+    </a>
+    <a class="nav-item" data-section="simulados" href="#" onclick="event.preventDefault(); navigate('simulados')">
+      ▣ [ simulados ]
+    </a>
+    <a class="nav-item" data-section="progresso" href="#" onclick="event.preventDefault(); navigate('progresso')">
+      ◈ [ progresso ]
+    </a>
+    <a class="nav-item" data-section="ranking" href="#" onclick="event.preventDefault(); navigate('ranking')">
+      ✦ [ ranking ]
+    </a>
+
+    <div class="sidebar-bottom">
+      <div><span class="sdot g"></span>sistema ativo</div>
+      <div class="sb-score">
+        <div class="sl">pontuação</div>
+        <div class="sv" id="scoreDisplay">0</div>
+      </div>
+      <div style="margin-top:10px;">
+        <div class="sl" style="margin-bottom:4px;">integridade do ÆGIS</div>
+        <div class="hp-bar"><div class="hp-fill" id="aegisHpBar" style="width:100%"></div></div>
+        <div style="font-size:9px;color:var(--text-dim);text-align:right;margin-top:3px;" id="hpText">100%</div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;">
+        <div>bloqueios: <span style="color:var(--green)" id="blocksDisplay">0</span></div>
+        <div style="margin-top:2px;">falhas: <span style="color:var(--red)" id="failsDisplay">0</span></div>
+      </div>
+      <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:10px;">
+        <button class="sidebar-nick-btn" onclick="exitToNickScreen()">
+          <span class="nick-icon">✎</span>
+          <span>[ trocar nick ]</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="breadcrumb">
+      <span style="color:var(--text-dim);cursor:pointer;" onclick="navigate('home')">home</span>
+      <span class="sep">/</span>
+      <span id="breadcrumb-section">home</span>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         HOME VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view active" id="view-home">
+      <div class="home-hero">
+        <div class="home-hero-tag">// ÆGIS SECURITY TRAINING PLATFORM — v1.0.0</div>
+        <div class="home-hero-title-row">
+          <h1>ÆGIS<span style="display:inline-block;width:14px;height:4px;background:var(--green);margin-left:10px;animation:blink 1s infinite;vertical-align:middle;"></span></h1>
+          <a class="hero-docs-btn" href="docs.html" target="_self">◈ documentação</a>
+        </div>
+        <div class="home-hero-sub">
+          Treinamento ofensivo-defensivo em <span class="hl">segurança serverless</span>.<br>
+          O <span class="warn">Loki's Shadows</span> ataca em tempo real — você aprende defendendo.
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat"><div class="hs-val">06</div><div class="hs-label">missões totais</div></div>
+          <div class="hero-stat"><div class="hs-val">01</div><div class="hs-label">desbloqueadas</div></div>
+          <div class="hero-stat"><div class="hs-val">∞</div><div class="hs-label">ataques do loki</div></div>
+          <div class="hero-stat"><div class="hs-val" id="heroSuccessRate">0%</div><div class="hs-label">taxa de sucesso</div></div>
+        </div>
+      </div>
+
+      <div class="section-title">missão ativa <div class="line"></div></div>
+      <div class="active-mission-card" onclick="navigate('missoes')">
+        <div class="amc-tag"><div class="amc-pulse"></div> em progresso</div>
+        <h2 id="activeMissionTitle">Missão 01 — O Escudo de Vidro</h2>
+        <div class="amc-meta">
+          <div>tipo: <span id="activeMissionType">Command Injection</span></div>
+          <div>dif: <span id="activeMissionDif">★☆☆☆☆</span></div>
+          <div>xp: <span id="activeMissionXp">+200</span></div>
+        </div>
+        <div class="amc-progress">
+          <div class="amc-progress-fill" id="amcProgressFill" style="width:0%"></div>
+        </div>
+        <div class="amc-arrow">→</div>
+      </div>
+
+      <div class="section-title">módulos <div class="line"></div></div>
+      <div class="home-grid">
+        <div class="home-card" onclick="navigate('missoes')">
+          <div class="hc-icon">⊞</div>
+          <div class="hc-title">Missões</div>
+          <div class="hc-desc">Missões ofensivo-defensivas contra o Loki's Shadows. Complete para desbloquear runas e subir no ranking.</div>
+          <div class="hc-badge"><span>01</span> desbloqueada</div>
+        </div>
+        <div class="home-card" onclick="navigate('estudos')">
+          <div class="hc-icon">◈</div>
+          <div class="hc-title">Estudos</div>
+          <div class="hc-desc">Arquivos de campo com teoria, exemplos de código e conceitos essenciais. O Loki ataca enquanto você lê.</div>
+          <div class="hc-badge">zona de <span>combate</span></div>
+        </div>
+        <div class="home-card" onclick="navigate('flashcards')">
+          <div class="hc-icon">⚡</div>
+          <div class="hc-title">Flashcards</div>
+          <div class="hc-desc">Revisão rápida de conceitos entre missões. Espaçamento de repetição para retenção máxima.</div>
+          <div class="hc-badge"><span>6</span> cards disponíveis</div>
+        </div>
+        <div class="home-card" onclick="navigate('simulados')">
+          <div class="hc-icon">▣</div>
+          <div class="hc-title">Simulados</div>
+          <div class="hc-desc">Testes cronometrados com pressão real. Ambiente similar aos ataques do Loki.</div>
+          <div class="hc-badge"><span>2</span> modos disponíveis</div>
+        </div>
+        <div class="home-card" onclick="navigate('progresso')">
+          <div class="hc-icon">◈</div>
+          <div class="hc-title">Progresso</div>
+          <div class="hc-desc">Árvore de habilidades, runas desbloqueadas e histórico de batalhas contra o Loki.</div>
+          <div class="hc-badge">nível: <span>Guardião I</span></div>
+        </div>
+        <div class="home-card" onclick="navigate('ranking')">
+          <div class="hc-icon">✦</div>
+          <div class="hc-title">Ranking</div>
+          <div class="hc-desc">Top guardiões da Season 01 — Sombras de Loki. Sua posição em tempo real.</div>
+          <div class="hc-badge">posição atual: <span id="myRankPos">#—</span></div>
+        </div>
+      </div>
+
+      <div class="section-title">status da ameaça <div class="line"></div></div>
+      <div class="loki-threat-card">
+        <div class="ltc-header">
+          <div class="ltc-icon">☽</div>
+          <div class="ltc-title">LOKI'S SHADOWS — ATIVO</div>
+          <div style="margin-left:auto;font-size:10px;border:1px solid var(--red-border);padding:2px 8px;color:var(--red);">nível <span id="lokiLevelDisplay">1</span></div>
+        </div>
+        <div class="ltc-body">
+          APT simulado está monitorando sua sessão. Intervalos de ataque diminuem conforme você progride.<br>
+          <span class="lk-hl">Vetores identificados:</span> Command Injection · Path Traversal · Env Exfiltration · Reverse Shell<br>
+          <span class="lk-purple">Inicie uma missão para ativar o campo de batalha.</span>
+        </div>
+      </div>
+
+      <div class="section-title">métricas de ameaça <div class="line"></div></div>
+      <div class="threat-meter">
+        <div class="tm-title">// THREAT INTELLIGENCE — LOKI'S SHADOWS</div>
+        <div class="tm-bar-wrap">
+          <div class="tm-bar-label"><span>Command Injection</span><span>alto</span></div>
+          <div class="tm-bar"><div class="tm-fill red" data-width="85%" style="width:0%"></div></div>
+        </div>
+        <div class="tm-bar-wrap" style="margin-top:8px;">
+          <div class="tm-bar-label"><span>Path Traversal</span><span>médio</span></div>
+          <div class="tm-bar"><div class="tm-fill yellow" data-width="60%" style="width:0%"></div></div>
+        </div>
+        <div class="tm-bar-wrap" style="margin-top:8px;">
+          <div class="tm-bar-label"><span>Env Exfiltration</span><span>médio</span></div>
+          <div class="tm-bar"><div class="tm-fill yellow" data-width="55%" style="width:0%"></div></div>
+        </div>
+        <div class="tm-bar-wrap" style="margin-top:8px;">
+          <div class="tm-bar-label"><span>Reverse Shell</span><span>baixo</span></div>
+          <div class="tm-bar"><div class="tm-fill green" data-width="30%" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <!-- ── ATIVIDADE RECENTE — dinâmica via activity-feed.js ── -->
+      <div class="section-title">atividade recente <div class="line"></div></div>
+      <div class="activity-list"></div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════
+         MISSÕES VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view" id="view-missoes">
+      <div class="mission-header">
+        <div class="tag">[ missões ] // catálogo de treinamento</div>
+        <h1>Missões<span style="display:inline-block;width:10px;height:3px;background:var(--green);margin-left:6px;animation:blink 1s infinite;vertical-align:middle;"></span></h1>
+        <div class="meta">
+          <div>total: <span>6 missões</span></div>
+          <div>desbloqueadas: <span>1</span></div>
+          <div>concluídas: <span>0</span></div>
+        </div>
+      </div>
+
+      <div class="section-title">missões disponíveis <div class="line"></div></div>
+      <div class="missions-grid"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         ESTUDOS VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view" id="view-estudos">
+      <div class="mission-header">
+        <div class="tag">[ estudos ] // arquivos de campo</div>
+        <h1>Estudos<span style="display:inline-block;width:10px;height:3px;background:var(--green);margin-left:6px;animation:blink 1s infinite;vertical-align:middle;"></span></h1>
+        <div class="meta">
+          <div>modo: <span>leitura ativa</span></div>
+          <div>aviso: <span style="color:var(--yellow);">⚠ zona de estudo</span></div>
+        </div>
+      </div>
+      <div id="estudos-container"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         FLASHCARDS VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view" id="view-flashcards">
+      <div class="mission-header">
+        <div class="tag">[ flashcards ] // revisão de conceitos</div>
+        <h1>Flashcards<span style="display:inline-block;width:10px;height:3px;background:var(--green);margin-left:6px;animation:blink 1s infinite;vertical-align:middle;"></span></h1>
+        <div class="meta">
+          <div>deck: <span>missão-01</span></div>
+          <div>cards: <span>6</span></div>
+        </div>
+      </div>
+      <div class="fc-deck-info">
+        <div>deck ativo: <span>Command Injection</span></div>
+        <div>status: <span>em estudo</span></div>
+        <div>XP por conclusão: <span>+30 XP</span></div>
+      </div>
+      <div class="fc-counter" id="fcCounter">card <span>1</span> / <span>6</span> // deck: <span>missão-01</span></div>
+      <div class="flashcard-wrap">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="fc-face fc-front">
+            <div class="fc-tag">COMANDO</div>
+            <div class="fc-q">O que é Command Injection?</div>
+            <div class="fc-hint">[ clique para revelar ]</div>
+          </div>
+          <div class="fc-face fc-back">
+            <div class="fc-tag">RESPOSTA</div>
+            <div class="fc-answer">
+              Injeção de <span class="hl">comandos do sistema</span> via input não sanitizado. O shell executa comandos extras usando separadores como <code>;</code> <code>&&</code> <code>|</code>.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-controls">
+        <button class="btn btn-ghost" style="flex:1" onclick="prevCard()">[ ← anterior ]</button>
+        <button class="btn" style="flex:1" onclick="nextCard()">[ próximo → ]</button>
+      </div>
+      <div class="section-title" style="margin-top:8px;">todos os decks <div class="line"></div></div>
+      <div class="missions-grid">
+        <div class="mission-card active-card">
+          <div class="mc-num">01</div>
+          <div class="mc-body">
+            <div class="mc-title">Command Injection</div>
+            <div class="mc-meta"><span>6 cards</span><span>missão-01</span></div>
+          </div>
+          <div class="mc-side"><div class="mc-status active-s">ativo</div></div>
+        </div>
+        <div class="mission-card locked-card">
+          <div class="mc-num" style="color:var(--text-dim)">02</div>
+          <div class="mc-body">
+            <div class="mc-title" style="color:var(--text-dim)">IDOR</div>
+            <div class="mc-meta"><span>? cards</span><span>missão-02</span></div>
+          </div>
+          <div class="mc-side"><div class="mc-status">🔒</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SIMULADOS VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view" id="view-simulados">
+      <div class="sim-header">
+        <h2>Simulados</h2>
+        <p>Testes para consolidar o aprendizado sob pressão. Questões aleatórias do banco de missões desbloqueadas. O Loki continua atacando durante o simulado.</p>
+      </div>
+      <div class="section-title">escolha o modo <div class="line"></div></div>
+      <div class="sim-modes">
+        <div class="sim-mode-card" onclick="startSimulado('cronometrado')">
+          <div class="sm-icon">⏱</div>
+          <div class="sm-title">Cronometrado</div>
+          <div class="sm-desc">10 questões, 60s cada. Simula pressão de incidente real. Erros custam mais XP.</div>
+        </div>
+        <div class="sim-mode-card" onclick="startSimulado('livre')">
+          <div class="sm-icon">◈</div>
+          <div class="sm-title">Livre</div>
+          <div class="sm-desc">Sem timer. Foco em aprendizado. Ideal para revisão após flashcards.</div>
+        </div>
+      </div>
+      <div class="section-title">bônus de performance <div class="line"></div></div>
+      <div class="content-block" style="margin-bottom:20px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div style="text-align:center;padding:10px;border:1px solid var(--border);">
+            <div style="font-family:'VT323',monospace;font-size:22px;color:var(--green);">+100 XP</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">simulado concluído</div>
+          </div>
+          <div style="text-align:center;padding:10px;border:1px solid var(--border);">
+            <div style="font-family:'VT323',monospace;font-size:22px;color:var(--yellow);">+50 XP</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">acima de 80%</div>
+          </div>
+          <div style="text-align:center;border:1px solid var(--green);padding:10px;">
+            <div style="font-family:'VT323',monospace;font-size:22px;color:var(--green);">+ runa</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">100% de acerto</div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-recent-title">histórico recente</div>
+      <div style="border:1px solid var(--border);padding:20px;background:var(--green-faint);text-align:center;">
+        <div style="font-size:12px;color:var(--text-dim);">nenhum simulado concluído ainda</div>
+        <div style="font-size:11px;color:rgba(0,255,65,0.3);margin-top:6px;">complete a Missão 01 para desbloquear o banco de questões</div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         PROGRESSO VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view" id="view-progresso">
+      <div class="mission-header">
+        <div class="tag">[ progresso ] // registro do guardião</div>
+        <h1>Progresso<span style="display:inline-block;width:10px;height:3px;background:var(--green);margin-left:6px;animation:blink 1s infinite;vertical-align:middle;"></span></h1>
+        <div class="meta">
+          <div>nível: <span>Guardião I</span></div>
+          <div>season: <span>01</span></div>
+        </div>
+      </div>
+      <div class="section-title">visão geral <div class="line"></div></div>
+      <div class="progress-overview">
+        <div class="prog-stat"><div class="ps-val" id="progScore">0</div><div class="ps-label">XP total</div></div>
+        <div class="prog-stat"><div class="ps-val" id="progBlocks">0</div><div class="ps-label">ataques bloqueados</div></div>
+        <div class="prog-stat"><div class="ps-val" id="progMissions">0</div><div class="ps-label">missões concluídas</div></div>
+      </div>
+      <div class="section-title">árvore de habilidades <div class="line"></div></div>
+      <div class="skill-tree" id="skillTreeDynamic">
+        <div class="skill-tree-title">SKILLS DESBLOQUEADAS</div>
+      </div>
+      <div class="section-title">runas <div class="line"></div></div>
+      <div class="content-block">
+        <div id="runasDynamic" style="display:flex;gap:12px;flex-wrap:wrap;"></div>
+      </div>
+      <div class="section-title" style="margin-top:20px;">histórico de batalhas <div class="line"></div></div>
+      <div class="timeline" id="battleHistoryDynamic"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         RANKING VIEW
+    ════════════════════════════════════════ -->
+    <div class="section-view" id="view-ranking">
+      <div class="ranking-header">
+        <div style="font-family:'VT323',monospace;font-size:22px;color:var(--green);">✦</div>
+        <h2>Ranking</h2>
+        <div class="rk-season">Season <span>01</span> — Sombras de Loki</div>
+      </div>
+      <div class="ranking-tabs">
+        <button class="rk-tab active" data-tab="global"  onclick="setRkTab('global')">global</button>
+        <button class="rk-tab"        data-tab="semanal" onclick="setRkTab('semanal')">semanal</button>
+        <button class="rk-tab"        data-tab="missoes" onclick="setRkTab('missoes')">missões</button>
+      </div>
+      <div class="ranking-list" id="rankingList"></div>
+      <div class="section-title" style="margin-top:20px;">recompensas da season <div class="line"></div></div>
+      <div class="content-block">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+          <div style="text-align:center;border:1px solid var(--yellow);padding:12px;background:rgba(255,224,102,0.04);">
+            <div style="font-size:22px;margin-bottom:6px;">🏆</div>
+            <div style="font-family:'VT323',monospace;font-size:16px;color:var(--yellow);">Top 3</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">badge dourado · título elite</div>
+          </div>
+          <div style="text-align:center;border:1px solid rgba(192,192,192,0.3);padding:12px;background:rgba(192,192,192,0.03);">
+            <div style="font-size:22px;margin-bottom:6px;">⊞</div>
+            <div style="font-family:'VT323',monospace;font-size:16px;color:#c0c0c0;">Top 10</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">badge prata · acesso S02</div>
+          </div>
+          <div style="text-align:center;border:1px solid var(--border);padding:12px;">
+            <div style="font-size:22px;margin-bottom:6px;">◈</div>
+            <div style="font-family:'VT323',monospace;font-size:16px;color:var(--green);">Top 50</div>
+            <div style="font-size:10px;color:var(--text-dim);margin-top:4px;">badge guardião · +XP bônus</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       ÆGIS BOT PANEL
+  ═══════════════════════════════════════════ -->
+  <aside class="bot-panel" id="botPanel">
+    <div id="panelGlitch"></div>
+
+    <div class="bot-topbar" id="botTopbar">
+      <div class="bot-avatar" id="botAvatar">◈</div>
+      <div class="bot-info">
+        <div class="name" id="botName">ÆGIS-BOT</div>
+        <div class="sub"  id="botSub">// guardião de conhecimento</div>
+      </div>
+      <div class="bot-status-pill" id="botPill"><span class="sdot g"></span>ativo</div>
+      <button id="mob-bot-close" aria-label="Fechar ÆGIS-BOT"
+        onclick="if(window.AegisMobile) window.AegisMobile.closeBot(); else if(window.closeMobBot) window.closeMobBot();">✕</button>
+    </div>
+
+    <div class="chat-area" id="chatArea"></div>
+
+    <div class="typing-indicator" id="typingInd">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+
+    <div class="chat-instructions" id="chatInstructions">
+      <span class="inst-arrow">→</span>
+      clique numa pergunta rápida ou escreva livremente abaixo
+    </div>
+
+    <div class="quick-replies" id="quickReplies" data-freeconv="0">
+      <div class="quick-label">// perguntas rápidas</div>
+    </div>
+
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" type="text" placeholder="perguntar ao ÆGIS..." maxlength="120"/>
+      <button class="send-btn" onclick="sendUserMsg()">↵</button>
+    </div>
+  </aside>
+
+</div>
+
+<button id="mob-bot-btn" aria-label="Abrir ÆGIS-BOT">◈</button>
+
+<!-- ═══════════════════════════════════════════
+     SCRIPTS — ordem importa
+═══════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  window._aegisSupabase = supabase.createClient(
+    'https://feyuowaurlwctogamzmk.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleXVvd2F1cmx3Y3RvZ2Ftem1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTI5OTgsImV4cCI6MjA5MzkyODk5OH0.1hbK0qhgBLtKSaiMHzkYs4AOeDroZMf6xn2FyTmBKNM'
+  );
+</script>
+
+<script src="config.js"></script>
+<script src="/js/ai-router.js"></script>
+<script src="/js/missions-attacks.js"></script>
+<script src="/js/missions-data.js"></script>
+<script src="/js/missions-ui.js"></script>
+<script src="/js/aegis-lab-patch.js"></script>
+<script src="/js/aegis-fix.js"></script>
+<script src="/js/personalities.js"></script>
+<script src="/js/estudos.js"></script>
+<script src="/js/estudos_content.js"></script>
+<script src="/js/nick-screen.js"></script>
+<script src="/js/aegis-mobile-nav.js"></script>
+<script src="/js/activity-feed.js"></script>
+<script src="/js/progresso-dynamic.js"></script>
+<script src="/js/flashcards-dynamic.js"></script>
+<script src="/js/simulados.js"></script>
+<script src="main.js"></script>
+<script src="/js/ranking.js"></script>
+
+<script>
+(function initChatInstructions() {
+  var _dismissed = false;
+  function dismissInstructions() {
+    if (_dismissed) return;
+    _dismissed = true;
+    var el = document.getElementById('chatInstructions');
+    if (!el) return;
+    el.classList.add('inst-hiding');
+    setTimeout(function() { if (el) el.style.display = 'none'; }, 380);
+  }
+  var inp = document.getElementById('chatInput');
+  if (inp) {
+    inp.addEventListener('focus', dismissInstructions);
+    inp.addEventListener('input', dismissInstructions);
+  }
+  var qr = document.getElementById('quickReplies');
+  if (qr) {
+    qr.addEventListener('click', function(e) {
+      if (e.target && e.target.classList.contains('quick-btn')) dismissInstructions();
+    });
+  }
+  var sendBtn = document.querySelector('.send-btn');
+  if (sendBtn) sendBtn.addEventListener('click', dismissInstructions);
+})();
+
+async function exitToNickScreen() {
+  const supabase = window._aegisSupabase;
+  if (!supabase) { location.reload(); return; }
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { location.reload(); return; }
+  if (typeof STATE !== 'undefined' && STATE.lokiTimeout) clearTimeout(STATE.lokiTimeout);
+  window.__aegisChangingNick = true;
+  window.__aegisSession      = session;
+  window.__aegisShowNickChange(session);
+}
+
+setInterval(function() {
+  if (typeof STATE === 'undefined') return;
+  var ps = document.getElementById('progScore');
+  var pb = document.getElementById('progBlocks');
+  var pm = document.getElementById('progMissions');
+  var ll = document.getElementById('lokiLevelDisplay');
+  if (ps) ps.textContent = STATE.score;
+  if (pb) pb.textContent = STATE.blocks;
+  if (pm) pm.textContent = Array.isArray(STATE.completedMissions) ? STATE.completedMissions.length : 0;
+  if (ll) ll.textContent = STATE.lokiLevel;
+  var sr = document.getElementById('heroSuccessRate');
+  if (sr) {
+    var total = (STATE.blocks || 0) + (STATE.fails || 0);
+    sr.textContent = total > 0 ? Math.round((STATE.blocks / total) * 100) + '%' : '0%';
+  }
+  var rs = document.getElementById('rankScore');
+  if (rs) rs.textContent = STATE.score;
+}, 1000);
+</script>
+
+<style>
+/* ── chat instructions ── */
+.chat-instructions {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 14px 6px; font-size: 11px;
+  font-family: 'Courier New', Courier, monospace;
+  color: rgba(0,255,65,0.28); letter-spacing: 0.07em;
+  border-top: 1px solid rgba(0,255,65,0.07);
+  background: transparent; opacity: 0; transform: translateY(3px);
+  animation: inst-appear 0.4s ease 1.3s forwards;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  pointer-events: none;
+}
+@keyframes inst-appear { to { opacity:1; transform:translateY(0); } }
+.chat-instructions.inst-hiding {
+  opacity: 0 !important; transform: translateY(-4px) !important;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.inst-arrow { color: rgba(0,255,65,0.22); flex-shrink: 0; }
+.quick-replies { transition: opacity 0.3s ease, transform 0.3s ease; }
+.quick-replies.used { opacity:0; transform:translateY(5px); pointer-events:none; }
+
+/* ── sidebar nick button ── */
+.sidebar-nick-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 8px 10px;
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 11px; letter-spacing: 0.08em;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.sidebar-nick-btn::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--green-faint); transform: translateX(-100%);
+  transition: transform 0.22s ease;
+}
+.sidebar-nick-btn:hover { color: var(--green); border-color: var(--green); }
+.sidebar-nick-btn:hover::before { transform: translateX(0); }
+.sidebar-nick-btn .nick-icon,
+.sidebar-nick-btn span { position: relative; }
+.sidebar-nick-btn .nick-icon { color: var(--green); opacity: 0.6; transition: opacity 0.2s ease; }
+.sidebar-nick-btn:hover .nick-icon { opacity: 1; }
+
+/* ── hero title row com botão docs ── */
+.home-hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+.home-hero-title-row h1 { margin-bottom: 0; }
+.hero-docs-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  text-decoration: none;
+  background: transparent;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+  align-self: center;
+  position: relative;
+  top: -4px;
+}
+.hero-docs-btn:hover {
+  color: var(--green);
+  border-color: rgba(0,255,65,0.5);
+  background: var(--green-faint);
+  text-shadow: 0 0 6px var(--green-glow);
+}
+@media (max-width: 480px) {
+  .hero-docs-btn { font-size: 10px; padding: 4px 10px; top: 0; }
+}
+
+/* ── sidebar logo image ── */
+.sidebar-logo-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.sidebar-logo-img {
+  display: block;
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 5px var(--green-glow));
+}
+.sidebar-logo-row .brand {
+  margin: 0;
+}
+
+/* ── logo no mobile topbar ── */
+.mob-topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mob-topbar-logo::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  background: url('/public/aegis-logo.png') center/contain no-repeat;
+  opacity: 0.92;
+  filter: drop-shadow(0 0 4px rgba(0,255,65,0.4));
+  flex-shrink: 0;
+}
+
+/* ── logo no drawer mobile ── */
+.mob-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mob-nav-logo::before {
+  content: '';
+  display: inline-block;
+  width: 26px;
+  height: 26px;
+  background: url('/public/aegis-logo.png') center/contain no-repeat;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 4px rgba(0,255,65,0.4));
+  flex-shrink: 0;
+}
+</style>
+
+</body>
+</html>

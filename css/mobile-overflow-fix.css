@@ -1,0 +1,132 @@
+/* ═══════════════════════════════════════════════════════════
+   ÆGIS — NICK SCREEN LAYOUT FIX v3
+   Corrige: corte mobile + centralização desktop
+═══════════════════════════════════════════════════════════ */
+
+/* ── 1. Raiz sem scroll horizontal ── */
+html, body {
+  overflow-x: hidden !important;
+}
+
+/* ── 2. Overlay: flex centralizado, sem overflow ── */
+#ns-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;       /* NÃO usar 100vw aqui */
+  height: 100% !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ── 3. Chuva binária: não vaza do overlay ── */
+#ns-rain {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+
+/* ── 4. Centro: centralizado, com padding lateral ── */
+#ns-overlay .ns-center {
+  position: relative !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  max-width: 480px !important;
+  margin: 0 auto !important;
+  padding: 0 24px !important;
+  box-sizing: border-box !important;
+}
+
+/* ── 5. Box-sizing em tudo dentro do overlay ── */
+#ns-overlay * {
+  box-sizing: border-box !important;
+}
+
+/* ── 6. Logo: nunca ultrapassa o container ── */
+#ns-overlay .ns-logo {
+  max-width: 100% !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+/* ── 7. Status bar: quebra em telas pequenas ── */
+#ns-overlay .ns-status-bar {
+  flex-wrap: wrap !important;
+  gap: 4px 0 !important;
+}
+
+/* ── 8. Boot lines: quebra texto longo ── */
+#ns-overlay .ns-boot {
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* ── 9. Elementos de largura total ── */
+#ns-overlay .ns-box,
+#ns-overlay .ns-input-wrap,
+#ns-overlay .ns-btn,
+#ns-overlay .ns-loki-warn,
+#ns-overlay .ns-hint,
+#ns-overlay .ns-error {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* ── 10. Mobile ≤ 480px ── */
+@media (max-width: 480px) {
+  #ns-overlay .ns-logo {
+    font-size: 52px !important;
+    letter-spacing: 5px !important;
+  }
+  #ns-overlay .ns-center {
+    padding: 0 16px !important;
+  }
+  #ns-overlay .ns-box {
+    padding: 18px 14px !important;
+  }
+  #ns-overlay .ns-btn {
+    letter-spacing: 2px !important;
+    font-size: 12px !important;
+  }
+  #ns-overlay .ns-status-bar {
+    font-size: 9px !important;
+  }
+  #ns-overlay .ns-boot {
+    font-size: 11px !important;
+  }
+}
+
+/* ── 11. Mobile muito estreito ≤ 380px ── */
+@media (max-width: 380px) {
+  #ns-overlay .ns-logo {
+    font-size: 42px !important;
+    letter-spacing: 3px !important;
+  }
+  #ns-overlay .ns-center {
+    padding: 0 12px !important;
+  }
+  #ns-overlay .ns-box {
+    padding: 14px 10px !important;
+  }
+  #ns-overlay .ns-btn {
+    letter-spacing: 1px !important;
+    font-size: 11px !important;
+    padding: 9px !important;
+  }
+  #ns-overlay .ns-sub {
+    font-size: 9px !important;
+    letter-spacing: 1px !important;
+  }
+  #ns-overlay .ns-boot {
+    font-size: 10px !important;
+  }
+  #ns-overlay .ns-loki-warn {
+    font-size: 10px !important;
+  }
+  #ns-overlay .ns-status-bar {
+    display: none !important; /* esconde em telas muito pequenas */
+  }
+}

@@ -1,0 +1,359 @@
+/* ═══════════════════════════════════════════════════════════
+   ÆGIS — MISSIONS MOBILE FIX (completo)
+   Cobre: briefing modal, mission cards, terminal lab,
+          quiz, fillblank, ordering, nav btns, steps bar
+═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+
+  /* ────────────────────────────────────────────────────────
+     BRIEFING MODAL
+  ──────────────────────────────────────────────────────── */
+  #briefingModal {
+    padding: 0 !important;
+    align-items: flex-end !important;
+    overflow-y: hidden !important;
+  }
+
+  .bm-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+    border-top: 2px solid var(--green) !important;
+    animation: slideUpSheet 0.35s ease both !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  @keyframes slideUpSheet {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);   opacity: 1; }
+  }
+
+  .bm-header {
+    padding: 14px !important;
+    gap: 10px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .bm-num   { font-size: 36px !important; }
+  .bm-title { font-size: 20px !important; line-height: 1.2 !important; word-break: break-word !important; }
+
+  .bm-meta {
+    grid-template-columns: repeat(2, 1fr) !important;
+    flex-shrink: 0 !important;
+  }
+
+  .bm-section {
+    padding: 12px 14px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .bm-section-title {
+    font-size: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .bm-text {
+    font-size: 12px !important;
+    line-height: 1.7 !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  .bm-footer {
+    padding: 14px !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    flex-shrink: 0 !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    background: rgba(2, 8, 4, 0.98) !important;
+    border-top: 1px solid var(--border) !important;
+  }
+
+  .bm-cancel,
+  .bm-start {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 13px !important;
+    font-size: 13px !important;
+  }
+
+  /* ────────────────────────────────────────────────────────
+     MISSION CARDS (lista)
+  ──────────────────────────────────────────────────────── */
+  .mission-card {
+    padding: 10px 12px !important;
+    gap: 10px !important;
+  }
+
+  .mc-num    { font-size: 24px !important; width: 30px !important; }
+  .mc-title  { font-size: 14px !important; }
+  .mc-meta   { font-size: 9px !important; flex-wrap: wrap !important; gap: 4px !important; }
+  .mc-xp     { font-size: 14px !important; }
+  .mc-status { font-size: 9px !important; }
+
+  /* ────────────────────────────────────────────────────────
+     MISSION DETAIL
+  ──────────────────────────────────────────────────────── */
+  #missionDetailView {
+    padding: 0 !important;
+  }
+
+  /* ── Steps bar: scroll horizontal ── */
+  .steps-bar {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    padding: 0 4px !important;
+  }
+  .steps-bar::-webkit-scrollbar { display: none; }
+
+  .step {
+    font-size: 10px !important;
+    padding: 10px 8px !important;
+    letter-spacing: 0.5px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* ── Seções ── */
+  .section-title  { font-size: 11px !important; }
+  .content-block  { font-size: 12px !important; padding: 12px !important; line-height: 1.7 !important; }
+
+  /* ── Code blocks ── */
+  .code-block {
+    font-size: 10px !important;
+    padding: 10px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: pre !important;
+  }
+
+  /* ── Attack challenge box ── */
+  .challenge-box { padding: 12px !important; }
+  .ch-title      { font-size: 11px !important; }
+
+  /* ── ÆGIS tip ── */
+  .aegis-tip-block {
+    flex-direction: column !important;
+    gap: 6px !important;
+    padding: 10px 12px !important;
+  }
+
+  /* ────────────────────────────────────────────────────────
+     TERMINAL LAB — principal problema mobile
+  ──────────────────────────────────────────────────────── */
+  .terminal-lab { overflow: hidden !important; }
+
+  .tl-topbar {
+    padding: 7px 10px !important;
+    gap: 5px !important;
+  }
+
+  .tl-title {
+    font-size: 10px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  .tl-output {
+    padding: 10px 12px !important;
+    max-height: 180px !important;
+  }
+
+  .tl-line {
+    font-size: 10px !important;
+    white-space: pre-wrap !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+  }
+
+  .tl-challenges { padding: 12px !important; }
+
+  .tl-instruction {
+    font-size: 11px !important;
+    line-height: 1.6 !important;
+  }
+
+  /* Payload box: texto do payload quebra, botão vai pra linha de baixo */
+  .tl-payload-box { padding: 10px 12px !important; }
+
+  .tl-prompt-line {
+    align-items: flex-start !important;   /* era center — causava corte */
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .tl-prompt       { font-size: 10px !important; padding-top: 2px !important; }
+
+  .tl-payload-text {
+    font-size: 10px !important;
+    word-break: break-all !important;
+    overflow-wrap: break-word !important;
+    min-width: 0 !important;
+    line-height: 1.6 !important;
+  }
+
+  .tl-exec-btn {
+    width: 100% !important;             /* full-width em mobile */
+    margin-top: 8px !important;
+    padding: 8px !important;
+    font-size: 11px !important;
+    text-align: center !important;
+  }
+
+  .tl-hint     { font-size: 10px !important; word-break: break-word !important; }
+  .tl-hint-btn { font-size: 10px !important; }
+  .tl-complete { font-size: 10px !important; }
+
+  /* ────────────────────────────────────────────────────────
+     MULTICHOICE LAB
+  ──────────────────────────────────────────────────────── */
+  .mc-question { font-size: 12px !important; }
+  .mc-code     { font-size: 9px !important; }
+
+  .mc-opt {
+    font-size: 10px !important;
+    padding: 8px 10px !important;
+    gap: 8px !important;
+  }
+
+  .mc-feedback  { font-size: 10px !important; }
+  .mc-complete-title { font-size: 20px !important; }
+
+  /* ────────────────────────────────────────────────────────
+     FILLBLANK LAB
+  ──────────────────────────────────────────────────────── */
+  .fb-template {
+    font-size: 10px !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+
+  .fb-input {
+    min-width: 90px !important;
+    max-width: 85% !important;
+    font-size: 10px !important;
+  }
+
+  .fb-check-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px !important;
+  }
+
+  .fb-result-item { font-size: 10px !important; }
+  .fb-score       { font-size: 11px !important; }
+
+  /* ────────────────────────────────────────────────────────
+     ORDERING LAB
+  ──────────────────────────────────────────────────────── */
+  .ord-item  { padding: 8px 10px !important; gap: 8px !important; }
+  .ord-label { font-size: 10px !important; min-width: 100px !important; }
+  .ord-code  { font-size: 9px !important; max-width: 110px !important; }
+
+  .ord-check-btn {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 10px !important;
+  }
+
+  /* ────────────────────────────────────────────────────────
+     QUIZ — step 5
+  ──────────────────────────────────────────────────────── */
+  .quiz-question { font-size: 12px !important; line-height: 1.6 !important; }
+
+  .quiz-opt {
+    font-size: 10px !important;
+    padding: 9px 10px !important;
+    gap: 8px !important;
+  }
+
+  .quiz-feedback { font-size: 10px !important; }
+
+  /* ────────────────────────────────────────────────────────
+     NAV BUTTONS
+  ──────────────────────────────────────────────────────── */
+  .nav-btns {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+
+  .nav-btns .btn,
+  .nav-btns button {
+    width: 100% !important;
+    text-align: center !important;
+    min-height: 42px !important;        /* touch target acessível */
+    font-size: 11px !important;
+  }
+
+  /* ────────────────────────────────────────────────────────
+     MODAIS EXTRA
+  ──────────────────────────────────────────────────────── */
+  #lokiModal {
+    width: calc(100% - 24px) !important;
+    max-width: 100% !important;
+    left: 12px !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+
+  .lm-choices-section { padding: 10px 12px !important; }
+  .lm-choice-btn { font-size: 11px !important; padding: 10px 12px !important; }
+  .lm-payload    { font-size: 11px !important; word-break: break-all !important; }
+  .lm-taunt      { font-size: 12px !important; }
+
+  /* ── Hack overlay ── */
+  #hackIntrusionMsg {
+    font-size: 22px !important;
+    letter-spacing: 2px !important;
+  }
+
+  /* ── Unlock notification ── */
+  #unlockNotif {
+    bottom: 16px !important;
+    right: 12px !important;
+    left: 12px !important;
+    min-width: unset !important;
+  }
+
+  /* ── Lab block ── */
+  .lab-header { flex-wrap: wrap !important; padding: 10px 12px !important; }
+  .lab-body   { padding: 12px !important; }
+  .lab-desc   { padding: 10px 12px !important; font-size: 11px !important; }
+}
+
+/* ════════════════════════════════════════════════════════
+   EXTRA ESTREITO — 380px e abaixo
+════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+
+  .bm-box        { max-height: 95vh !important; }
+  .bm-meta       { grid-template-columns: 1fr 1fr !important; }
+  .bm-meta-val   { font-size: 14px !important; }
+  .bm-title      { font-size: 18px !important; }
+
+  .mc-title      { font-size: 13px !important; }
+  .code-block    { font-size: 9px !important; }
+
+  .tl-payload-text { font-size: 9px !important; }
+  .tl-line         { font-size: 9px !important; }
+
+  .quiz-opt { font-size: 9px !important; padding: 8px !important; }
+  .mc-opt   { font-size: 9px !important; }
+
+  .step { padding: 8px 6px !important; font-size: 9px !important; }
+}

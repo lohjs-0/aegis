@@ -1,0 +1,15 @@
+config.js
+
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+*.suo
+*.user
+
+*.log
+
+node_modules/
+.env
+.env.local
