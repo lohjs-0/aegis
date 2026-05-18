@@ -3,9 +3,9 @@ var XP_PER_MODULE = 100;
 /* ─────────────────────────────────────────────────────────
    CONSTANTES
 ───────────────────────────────────────────────────────── */
-var LOKI_MIN_INTERVAL = 90000;
-var LOKI_MAX_INTERVAL = 240000;
-var LOKI_ATTACK_TIMER = 20;
+var LOKI_MIN_INTERVAL = 120000;  
+var LOKI_MAX_INTERVAL = 180000;  
+var LOKI_ATTACK_TIMER = 20;     
 var XP_LOSS_PER_FAIL  = 40;
 var HP_LOSS_PER_FAIL  = 15;
 var HP_GAIN_PER_WIN   = 5;
