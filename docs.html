@@ -39,18 +39,11 @@
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
 @keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
 @keyframes glitch { 0%,100%{text-shadow:0 0 10px var(--green-glow);} 33%{text-shadow:-2px 0 #ff0040,2px 0 #00ffff;} 66%{text-shadow:2px 0 #ff0040,-2px 0 #00ffff;} }
-@keyframes lokiGlitch { 0%,100%{text-shadow:0 0 10px rgba(255,30,30,0.4);letter-spacing:2px;} 25%{text-shadow:-3px 0 var(--loki-purple),3px 0 var(--red);letter-spacing:4px;} 50%{text-shadow:3px 0 var(--loki-purple),-3px 0 var(--red);transform:skewX(-3deg);} 75%{text-shadow:0 0 20px rgba(255,30,30,0.4);letter-spacing:1px;} }
 @keyframes scanline { 0%{top:0;} 100%{top:100%;} }
 @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 var(--green-glow);} 50%{box-shadow:0 0 12px 2px var(--green-glow);} }
 @keyframes borderPulse { 0%,100%{border-color:var(--border);} 50%{border-color:var(--border-bright);} }
-@keyframes slideRight { from{width:0;} to{width:100%;} }
 @keyframes rain { 0%{transform:translateY(-100%);opacity:0;} 10%{opacity:0.04;} 90%{opacity:0.02;} 100%{transform:translateY(100vh);opacity:0;} }
-@keyframes flicker { 0%,95%,100%{opacity:1;} 96%{opacity:0.4;} 97%{opacity:1;} 98%{opacity:0.2;} 99%{opacity:0.9;} }
-@keyframes interferenceFlicker { 0%,100%{opacity:1;} 15%{opacity:0.3;} 30%{opacity:0.9;} 45%{opacity:0.2;} 60%{opacity:0.85;} 75%{opacity:0.4;} 90%{opacity:0.95;} }
-@keyframes countUp { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
-@keyframes lokiReveal { 0%{clip-path:inset(0 100% 0 0);} 100%{clip-path:inset(0 0% 0 0);} }
 @keyframes typein { from{opacity:0;transform:translateX(-4px);} to{opacity:1;transform:translateX(0);} }
-@keyframes shakeX { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
 
 /* ═══════════════════════════════════════════
    RESET & BASE
@@ -99,14 +92,8 @@ body::before{
 .docs-sidebar::-webkit-scrollbar{display:none;}
 
 .ds-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
-
 .ds-logo-row{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
-.ds-logo-img{
-  display:block;width:36px;height:36px;
-  object-fit:contain;flex-shrink:0;opacity:0.92;
-  filter:drop-shadow(0 0 5px var(--green-glow));
-}
-
+.ds-logo-img{display:block;width:36px;height:36px;object-fit:contain;flex-shrink:0;opacity:0.92;filter:drop-shadow(0 0 5px var(--green-glow));}
 .ds-brand{font-family:var(--display);font-size:30px;color:var(--green);letter-spacing:2px;line-height:1;text-shadow:0 0 15px var(--green-glow);animation:glitch 5s infinite;}
 .ds-sub{font-size:9px;color:var(--text-dim);letter-spacing:2px;margin-top:4px;}
 .ds-tag{display:inline-block;margin-top:8px;font-size:9px;letter-spacing:2px;color:rgba(0,255,65,0.4);border:1px solid var(--border);padding:2px 7px;}
@@ -127,24 +114,13 @@ body::before{
   background:rgba(2,8,4,0.98);border-bottom:1px solid var(--border);
   padding:12px 16px;align-items:center;gap:12px;flex-shrink:0;
 }
-
-.mob-brand{
-  font-family:var(--display);font-size:26px;color:var(--green);
-  letter-spacing:2px;line-height:1;text-shadow:0 0 12px var(--green-glow);
-  animation:glitch 5s infinite;flex:1;
-  display:flex;align-items:center;gap:8px;
-}
-.mob-brand-img{
-  display:block;width:28px;height:28px;
-  object-fit:contain;flex-shrink:0;opacity:0.92;
-  filter:drop-shadow(0 0 4px rgba(0,255,65,0.4));
-}
-
+.mob-brand{font-family:var(--display);font-size:26px;color:var(--green);letter-spacing:2px;line-height:1;text-shadow:0 0 12px var(--green-glow);animation:glitch 5s infinite;flex:1;display:flex;align-items:center;gap:8px;}
+.mob-brand-img{display:block;width:28px;height:28px;object-fit:contain;flex-shrink:0;opacity:0.92;filter:drop-shadow(0 0 4px rgba(0,255,65,0.4));}
 .mob-menu-btn{background:transparent;border:1px solid var(--border);color:var(--text-mid);font-family:var(--mono);font-size:13px;padding:6px 12px;cursor:pointer;transition:all 0.2s;letter-spacing:1px;flex-shrink:0;}
 .mob-menu-btn:hover{border-color:var(--green);color:var(--green);}
 
 /* ═══════════════════════════════════════════
-   MOBILE DRAWER OVERLAY
+   MOBILE DRAWER
 ═══════════════════════════════════════════ */
 .mob-overlay{display:none;position:fixed;inset:0;background:rgba(2,8,4,0.8);z-index:300;backdrop-filter:blur(2px);}
 .mob-overlay.open{display:block;}
@@ -317,7 +293,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
 .back-top:hover{border-color:var(--green);color:var(--green);}
 
 /* ═══════════════════════════════════════════
-   RESPONSIVE — MOBILE
+   RESPONSIVE
 ═══════════════════════════════════════════ */
 @media(max-width:768px){
   .docs-sidebar{display:none;}
@@ -347,7 +323,6 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
 </head>
 <body>
 
-<!-- Binary rain BG -->
 <div id="binBg"></div>
 
 <!-- Mobile topbar -->
@@ -359,10 +334,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
   <button class="mob-menu-btn" id="mobMenuBtn">[ ≡ menu ]</button>
 </div>
 
-<!-- Mobile drawer overlay -->
 <div class="mob-overlay" id="mobOverlay"></div>
-
-<!-- Mobile drawer -->
 <div class="mob-drawer" id="mobDrawer">
   <div class="ds-logo">
     <div class="ds-logo-row">
@@ -372,9 +344,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     <div class="ds-sub">&gt; security training platform</div>
     <div class="ds-tag">// DOCUMENTAÇÃO</div>
   </div>
-  <div class="ds-nav" id="drawerNav">
-    <!-- preenchido via JS -->
-  </div>
+  <div class="ds-nav" id="drawerNav"></div>
   <a class="ds-back" href="index.html">← voltar à plataforma</a>
 </div>
 
@@ -390,9 +360,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     <div class="ds-sub">&gt; security training platform</div>
     <div class="ds-tag">// DOCUMENTAÇÃO</div>
   </div>
-  <div class="ds-nav" id="sidebarNav">
-    <!-- preenchido via JS -->
-  </div>
+  <div class="ds-nav" id="sidebarNav"></div>
   <a class="ds-back" href="index.html">← voltar à plataforma</a>
 </nav>
 
@@ -434,7 +402,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     </ul>
   </details>
 
-  <!-- ── HERO ── -->
+  <!-- HERO -->
   <div class="docs-hero" id="overview">
     <div class="docs-hero-tag">// ÆGIS SECURITY TRAINING PLATFORM — DOCUMENTAÇÃO TÉCNICA v1.0.0</div>
     <h1>ÆGIS<span style="display:inline-block;width:12px;height:4px;background:var(--green);margin-left:8px;animation:blink 1s infinite;vertical-align:middle;"></span></h1>
@@ -447,23 +415,24 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     <span class="callout-icon">◈</span>
     <div><strong>Premissa:</strong> O jogador é um <strong>Guardião</strong> responsável por manter o ÆGIS operacional. Erros custam integridade (HP). Bloqueios corretos concedem XP. Se o HP chegar a 0%, o sistema é destruído e precisa ser reanimado.</div>
   </div>
-  <p class="doc-p"><strong>Stack:</strong> HTML + CSS + JavaScript vanilla · Supabase (PostgreSQL + Auth) · Claude API (Anthropic) para ÆGIS-BOT e taunts dinâmicos.</p>
+  <p class="doc-p"><strong>Stack:</strong> HTML + CSS + JavaScript vanilla · Node.js + Express · Supabase (PostgreSQL + Auth) · Mistral AI (via proxy server) · Deploy no Railway.</p>
 
-  <!-- ── ARQUITETURA ── -->
+  <!-- ARQUITETURA -->
   <hr class="doc-divider">
   <div class="doc-section" id="arquitetura">
     <div class="doc-h2"><span class="doc-h2-num">02</span>Arquitetura</div>
     <div class="file-tree">
       <div><span class="ft-dir">/</span></div>
       <div class="i1"><span class="ft-file">index.html</span> <span class="ft-c">— estrutura principal da SPA</span></div>
-      <div class="i1"><span class="ft-file ft-mod">main.js</span> <span class="ft-c">— game state, HUD, Loki, simulados, morte/cura</span></div>
+      <div class="i1"><span class="ft-file ft-mod">main.js</span> <span class="ft-c">— game state, HUD, Loki, morte/cura</span></div>
+      <div class="i1"><span class="ft-file ft-mod">server.js</span> <span class="ft-c">— Express: proxy Mistral, ranking API, auth middleware</span></div>
       <div class="i1"><span class="ft-file">style.css</span> <span class="ft-c">— estilos globais e variáveis CSS</span></div>
-      <div class="i1"><span class="ft-file">config.js</span> <span class="ft-c">— configurações e API keys</span></div>
+      <div class="i1"><span class="ft-file">package.json</span> <span class="ft-c">— dependências Node.js</span></div>
       <div class="i1"><span class="ft-dir">/js</span></div>
       <div class="i2"><span class="ft-file ft-mod">missions-data.js</span> <span class="ft-c">— MISSIONS_DATA, MISSION_STATE, FLASHCARDS</span></div>
       <div class="i2"><span class="ft-file ft-mod">missions-ui.js</span> <span class="ft-c">— render das missões e steps</span></div>
       <div class="i2"><span class="ft-file ft-mod">missions-attacks.js</span> <span class="ft-c">— pool de ataques ATTACKS</span></div>
-      <div class="i2"><span class="ft-file">ai-router.js</span> <span class="ft-c">— Claude API: ÆGIS-BOT + taunts Loki</span></div>
+      <div class="i2"><span class="ft-file ft-mod">ai-router.js</span> <span class="ft-c">— ÆGIS-BOT + taunts Loki via Mistral</span></div>
       <div class="i2"><span class="ft-file">estudos.js / estudos_content.js</span> <span class="ft-c">— módulos de estudo</span></div>
       <div class="i2"><span class="ft-file">nick-screen.js</span> <span class="ft-c">— autenticação Supabase</span></div>
       <div class="i2"><span class="ft-file ft-mod">aegis-mobile-nav.js</span> <span class="ft-c">— navegação mobile completa</span></div>
@@ -478,7 +447,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     </div>
   </div>
 
-  <!-- ── STATE ── -->
+  <!-- STATE -->
   <hr class="doc-divider">
   <div class="doc-section" id="state">
     <div class="doc-h2"><span class="doc-h2-num">03</span>Game State</div>
@@ -498,7 +467,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     <p class="doc-p">Persistido via <code>persistStateLocally()</code> e restaurado via <code>restoreStateFromLocal()</code>. O <code>ranking.js</code> envolve o STATE num <strong>Proxy</strong> que sincroniza automaticamente com o Supabase a cada mudança relevante.</p>
   </div>
 
-  <!-- ── _grantXP ── -->
+  <!-- _grantXP -->
   <hr class="doc-divider">
   <div class="doc-section" id="grantxp">
     <div class="doc-h2"><span class="doc-h2-num">04</span>Sistema de XP</div>
@@ -530,7 +499,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     </div>
   </div>
 
-  <!-- ── HUD ── -->
+  <!-- HUD -->
   <hr class="doc-divider">
   <div class="doc-section" id="hud">
     <div class="doc-h2"><span class="doc-h2-num">05</span>HUD & Integridade</div>
@@ -553,11 +522,25 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     </div>
   </div>
 
-  <!-- ── LOKI ── -->
+  <!-- LOKI -->
   <hr class="doc-divider">
   <div class="doc-section" id="loki">
     <div class="doc-h2"><span class="doc-h2-num">06</span>Sistema Loki</div>
     <p class="doc-p">O Loki só ataca quando <code>lokiCanAttack()</code> retorna <code>true</code> — i.e., quando existe <code>MISSION_STATE.activeMissionId</code> definido.</p>
+    <div class="doc-h3">Escalada por Missão</div>
+    <div class="table-wrap">
+    <table class="doc-table">
+      <thead><tr><th>Missão</th><th>Tema</th><th>Intervalo</th><th>Timer</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>Command Injection</td><td>30–45s</td><td>15s</td></tr>
+        <tr><td>02</td><td>IDOR</td><td>22–35s</td><td>13s</td></tr>
+        <tr><td>03</td><td>Broken Auth</td><td>16–28s</td><td>11s</td></tr>
+        <tr><td>04</td><td>SSRF</td><td>12–22s</td><td>9s</td></tr>
+        <tr><td>05</td><td>Supply Chain</td><td>9–16s</td><td>8s</td></tr>
+        <tr><td>06</td><td>Final APT</td><td>7–13s</td><td>7s</td></tr>
+      </tbody>
+    </table>
+    </div>
     <div class="doc-h3">Fluxo de Ataque</div>
     <div class="flow">
       <div class="flow-step"><span class="f-arrow">→</span><span><span class="f-hl">scheduleAttack()</span> — agenda próximo ataque via setTimeout</span></div>
@@ -570,22 +553,10 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
       <div class="flow-step i1"><span class="f-arrow">↳</span><span class="f-red">Errado:</span>&nbsp;−3% HP, +falha, reagenda</div>
       <div class="flow-step"><span class="f-arrow">→</span><span>Timer esgota → <code>onTimeout()</code>: −5% HP, +falha, reagenda</span></div>
     </div>
-    <div class="doc-h3">Delay por Nível</div>
-    <div class="table-wrap">
-    <table class="doc-table">
-      <thead><tr><th>Nível Loki</th><th>Delay base</th><th>Com random</th></tr></thead>
-      <tbody>
-        <tr><td>1</td><td>22s</td><td>22–26s</td></tr>
-        <tr><td>2</td><td>18.5s</td><td>18.5–22.5s</td></tr>
-        <tr><td>4</td><td>11.5s</td><td>11.5–15.5s</td></tr>
-        <tr><td>5+</td><td>9s (mín)</td><td>9–13s</td></tr>
-      </tbody>
-    </table>
-    </div>
-    <p class="doc-p">Pool de ataques: <code>ATTACKS</code> em <code>missions-attacks.js</code>. Taunts estáticos em <code>LOKI_WINS[]</code> / <code>LOKI_LOSES[]</code>. Taunts dinâmicos via <code>generateLokiTaunt()</code> no <code>ai-router.js</code>.</p>
+    <p class="doc-p">Pool de ataques: <code>ATTACKS</code> em <code>missions-attacks.js</code>. 70% ataques temáticos da missão ativa, 30% pool global. Taunts dinâmicos via <code>generateLokiTaunt()</code> no <code>ai-router.js</code> usando Mistral AI.</p>
   </div>
 
-  <!-- ── MORTE ── -->
+  <!-- MORTE -->
   <hr class="doc-divider">
   <div class="doc-section" id="morte">
     <div class="doc-h2"><span class="doc-h2-num">07</span>Morte & Reanimação</div>
@@ -606,10 +577,9 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
       <div class="flow-step"><span class="f-arrow">3.</span><span>Restaura bot para estado <span style="color:var(--yellow)">amarelo "reanimado"</span></span></div>
       <div class="flow-step"><span class="f-arrow">4.</span><span>Retoma ataques via <code>startLokiAttacks()</code></span></div>
     </div>
-    <div class="callout info"><span class="callout-icon">◈</span><div>O overlay usa <code>justify-content: flex-start</code> + <code>overflow-y: auto</code> para mobile. Inclui media query <code>max-width: 480px</code> que reduz fontes e espaçamentos para evitar corte do botão de reanimação.</div></div>
   </div>
 
-  <!-- ── CURA ── -->
+  <!-- CURA -->
   <hr class="doc-divider">
   <div class="doc-section" id="cura">
     <div class="doc-h2"><span class="doc-h2-num">08</span>Sistema de Cura</div>
@@ -628,11 +598,24 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     </div>
   </div>
 
-  <!-- ── MISSÕES ── -->
+  <!-- MISSÕES -->
   <hr class="doc-divider">
   <div class="doc-section" id="missoes">
     <div class="doc-h2"><span class="doc-h2-num">09</span>Missões</div>
     <p class="doc-p">Cada missão tem steps com conteúdo educativo e um quiz final. <code>MISSION_STATE</code> (em <code>missions-data.js</code>) controla o passo atual.</p>
+    <div class="table-wrap">
+    <table class="doc-table">
+      <thead><tr><th>Missão</th><th>Tema</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>Command Injection</td></tr>
+        <tr><td>02</td><td>IDOR</td></tr>
+        <tr><td>03</td><td>Broken Authentication</td></tr>
+        <tr><td>04</td><td>SSRF</td></tr>
+        <tr><td>05</td><td>Supply Chain</td></tr>
+        <tr><td>06</td><td>Final APT</td></tr>
+      </tbody>
+    </table>
+    </div>
     <div class="doc-h3">Ciclo de Vida</div>
     <div class="flow">
       <div class="flow-step"><span class="f-arrow">→</span><code>navigate('missoes')</code> → <code>refreshMissionsList()</code></div>
@@ -645,14 +628,14 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     <div class="callout info"><span class="callout-icon">◈</span><div><code>onMissionCompleted</code> verifica <code>completedMissions.includes(missionId)</code> antes de conceder recompensas — evita duplicatas.</div></div>
   </div>
 
-  <!-- ── ESTUDOS ── -->
+  <!-- ESTUDOS -->
   <hr class="doc-divider">
   <div class="doc-section" id="estudos">
     <div class="doc-h2"><span class="doc-h2-num">10</span>Estudos</div>
     <p class="doc-p">Controlado por <code>estudos.js</code> + <code>estudos_content.js</code>. Inicializado via <code>call(initEstudos)</code>. Destruído ao sair via <code>destroyEstudos()</code>. Módulos concluídos desbloqueiam questões extras no banco de simulados via <code>buildSimuladoPool()</code>.</p>
   </div>
 
-  <!-- ── FLASHCARDS ── -->
+  <!-- FLASHCARDS -->
   <hr class="doc-divider">
   <div class="doc-section" id="flashcards">
     <div class="doc-h2"><span class="doc-h2-num">11</span>Flashcards</div>
@@ -670,7 +653,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     </div>
   </div>
 
-  <!-- ── SIMULADOS ── -->
+  <!-- SIMULADOS -->
   <hr class="doc-divider">
   <div class="doc-section" id="simulados">
     <div class="doc-h2"><span class="doc-h2-num">12</span>Simulados</div>
@@ -686,21 +669,21 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
     <p class="doc-p"><code>buildSimuladoPool()</code>: 12 questões base + questões de módulos concluídos, embaralhadas, 10 por sessão. Estado em <code>window.SIMULADO_STATE</code>, separado do STATE principal.</p>
   </div>
 
-  <!-- ── PROGRESSO ── -->
+  <!-- PROGRESSO -->
   <hr class="doc-divider">
   <div class="doc-section" id="progresso">
     <div class="doc-h2"><span class="doc-h2-num">13</span>Progresso</div>
     <p class="doc-p">Inicializado por <code>initProgresso()</code>. Exibe XP, bloqueios e missões concluídas. A skill de Command Injection reflete o progresso real da Missão 01. A árvore de habilidades e as runas são preenchidas dinamicamente por <code>progresso-dynamic.js</code>.</p>
   </div>
 
-  <!-- ── RANKING ── -->
+  <!-- RANKING -->
   <hr class="doc-divider">
   <div class="doc-section" id="ranking">
     <div class="doc-h2"><span class="doc-h2-num">14</span>Ranking</div>
-    <p class="doc-p">Controlado por <code>ranking.js</code>. Tabs: <code>global</code>, <code>semanal</code>, <code>missoes</code>. Dados lidos do Supabase em tempo real via <code>refreshRankingView()</code>.</p>
+    <p class="doc-p">Controlado por <code>ranking.js</code>. Tabs: <code>global</code>, <code>semanal</code>, <code>missoes</code>. Dados lidos do Supabase em tempo real via <code>refreshRankingView()</code>. O score é sempre calculado e validado server-side pelo <code>server.js</code> — o frontend não controla XP diretamente.</p>
   </div>
 
-  <!-- ── NAVEGAÇÃO ── -->
+  <!-- NAVEGAÇÃO -->
   <hr class="doc-divider">
   <div class="doc-section" id="navegacao">
     <div class="doc-h2"><span class="doc-h2-num">15</span>Navegação</div>
@@ -709,7 +692,7 @@ code{font-family:'Fira Code',var(--mono);font-size:11px;color:var(--green);backg
 'simulados' | 'progresso' | 'ranking'</pre></div>
   </div>
 
-  <!-- ── MOBILE ── -->
+  <!-- MOBILE -->
   <hr class="doc-divider">
   <div class="doc-section" id="mobile">
     <div class="doc-h2"><span class="doc-h2-num">16</span>Mobile</div>
@@ -733,47 +716,86 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
     <div class="callout info"><span class="callout-icon">◈</span><div><strong>Anti-duplicate listeners:</strong> todos os botões usam <strong>clone + replace</strong> antes de adicionar event listeners. Evita disparos múltiplos quando <code>bind()</code> é chamado mais de uma vez.</div></div>
   </div>
 
-  <!-- ── BACKEND ── -->
+  <!-- BACKEND -->
   <hr class="doc-divider">
   <div class="doc-section" id="backend">
-    <div class="doc-h2"><span class="doc-h2-num">17</span>Backend — Supabase</div>
-    <p class="doc-p">Auth via OAuth Google gerenciada por <code>nick-screen.js</code>. Evento <code>aegis:nick-set</code> disparado após autenticação bem-sucedida para sincronizar o STATE.</p>
-    <div class="doc-h3">Tabela <code>rankings</code></div>
+    <div class="doc-h2"><span class="doc-h2-num">17</span>Backend — Node.js + Express</div>
+    <p class="doc-p">O <code>server.js</code> roda em Node.js com Express e é deployado no Railway. Serve o frontend via <code>express.static</code> e expõe endpoints de API.</p>
+    <div class="doc-h3">Endpoints</div>
+    <div class="table-wrap">
+    <table class="doc-table">
+      <thead><tr><th>Endpoint</th><th>Auth</th><th>Descrição</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST /api/chat</code></td><td>✓ requireAuth</td><td>Proxy para Mistral AI (ÆGIS-BOT e taunts do Loki)</td></tr>
+        <tr><td><code>POST /api/ranking/save</code></td><td>✓ requireAuth</td><td>Salva estado do jogador com score server-side</td></tr>
+        <tr><td><code>GET /api/ranking</code></td><td>público</td><td>Retorna ranking global/semanal/missões</td></tr>
+        <tr><td><code>GET /api/ranking/me</code></td><td>✓ requireAuth</td><td>Retorna dados do jogador autenticado</td></tr>
+        <tr><td><code>POST /api/mission/start</code></td><td>✓ requireAuth</td><td>Gera mission_token para iniciar missão</td></tr>
+        <tr><td><code>POST /api/mission/complete</code></td><td>✓ requireAuth</td><td>Valida token e registra missão concluída</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="doc-h3">Segurança do Score</div>
+    <div class="callout info">
+      <span class="callout-icon">◈</span>
+      <div>
+        Score calculado <strong>server-side</strong> via <code>recalculateScore()</code> — o frontend não controla XP diretamente.<br>
+        <code>fails</code> e <code>blocks</code> só sobem. <code>aegis_hp</code> só cai. Nunca sobrescreve com valores mais favoráveis ao jogador.
+      </div>
+    </div>
+    <div class="doc-h3">Supabase</div>
+    <p class="doc-p">Auth via OAuth Google gerenciada por <code>nick-screen.js</code>. Evento <code>aegis:nick-set</code> disparado após autenticação bem-sucedida para sincronizar o STATE. JWT validado pelo <code>requireAuth</code> middleware em cada request.</p>
     <div class="table-wrap">
     <table class="doc-table">
       <thead><tr><th>Coluna</th><th>Tipo</th><th>Descrição</th></tr></thead>
       <tbody>
-        <tr><td><code>auth</code></td><td>text</td><td>Provider (ex: <code>'google'</code>)</td></tr>
-        <tr><td><code>nick</code></td><td>text</td><td>Nick do guardião</td></tr>
-        <tr><td><code>score</code></td><td>int</td><td>XP total acumulado</td></tr>
-        <tr><td><code>missions</code></td><td>int</td><td>Missões concluídas</td></tr>
+        <tr><td><code>user_id</code></td><td>text</td><td>ID do usuário Supabase</td></tr>
+        <tr><td><code>nick</code></td><td>text</td><td>Nick do guardião (máx. 30 chars)</td></tr>
+        <tr><td><code>score</code></td><td>int</td><td>XP total — calculado server-side</td></tr>
+        <tr><td><code>blocks</code></td><td>int</td><td>Ataques bloqueados</td></tr>
+        <tr><td><code>fails</code></td><td>int</td><td>Erros acumulados</td></tr>
+        <tr><td><code>aegis_hp</code></td><td>int</td><td>Integridade atual</td></tr>
+        <tr><td><code>missions</code></td><td>int</td><td>Número de missões concluídas</td></tr>
+        <tr><td><code>completed_missions</code></td><td>int[]</td><td>IDs das missões concluídas</td></tr>
       </tbody>
     </table>
     </div>
-    <p class="doc-p">O <code>ranking.js</code> envolve o STATE num <strong>Proxy</strong>. Mudanças em <code>score</code>, <code>blocks</code>, <code>fails</code> e <code>completedMissions</code> disparam <code>upsert</code> automático no Supabase.</p>
   </div>
 
-  <!-- ── BOT ── -->
+  <!-- BOT -->
   <hr class="doc-divider">
   <div class="doc-section" id="bot">
     <div class="doc-h2"><span class="doc-h2-num">18</span>ÆGIS-BOT</div>
-    <p class="doc-p">Controlado por <code>ai-router.js</code> via Claude API. Responde perguntas livres sobre segurança e gera taunts contextuais do Loki.</p>
+    <p class="doc-p">Controlado por <code>ai-router.js</code>. Usa <strong>Mistral AI</strong> via proxy em <code>/api/chat</code> no <code>server.js</code>. Respostas locais frequentes são atendidas sem chamada à API — latência zero. Chamadas externas só ocorrem para perguntas livres e taunts dinâmicos do Loki.</p>
+    <div class="doc-h3">Modelos</div>
+    <div class="table-wrap">
+    <table class="doc-table">
+      <thead><tr><th>Uso</th><th>Modelo</th><th>max_tokens</th></tr></thead>
+      <tbody>
+        <tr><td>ÆGIS-BOT (respostas livres)</td><td><code>mistral-small-latest</code></td><td>300</td></tr>
+        <tr><td>Loki taunts dinâmicos</td><td><code>mistral-small-latest</code></td><td>80</td></tr>
+        <tr><td>Reação ao resultado do ataque</td><td><code>mistral-small-latest</code></td><td>60</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="doc-h3">Funções</div>
     <div class="table-wrap">
     <table class="doc-table">
       <thead><tr><th>Função</th><th>Descrição</th></tr></thead>
       <tbody>
         <tr><td><code>botSay(msg)</code></td><td>Exibe mensagem do bot no chat</td></tr>
         <tr><td><code>appendMsg(html, type, cls)</code></td><td>Adiciona mensagem ao <code>#chatArea</code></td></tr>
-        <tr><td><code>sendUserMsg()</code></td><td>Lê <code>#chatInput</code> e envia para a IA</td></tr>
-        <tr><td><code>showQR()</code> / <code>hideQR()</code></td><td>Exibe/oculta quick replies</td></tr>
+        <tr><td><code>sendUserMsg()</code></td><td>Lê <code>#chatInput</code>, tenta resposta local, depois chama Mistral</td></tr>
+        <tr><td><code>showQR()</code> / <code>hideQR()</code></td><td>Exibe/oculta quick replies contextuais</td></tr>
         <tr><td><code>aegisReactToResult(win, type)</code></td><td>Bot reage ao resultado do ataque do Loki</td></tr>
-        <tr><td><code>generateLokiTaunt(type, lastChoice?)</code></td><td>Gera fala contextual do Loki via Claude</td></tr>
+        <tr><td><code>generateLokiTaunt(type, lastChoice?)</code></td><td>Gera fala contextual do Loki via Mistral</td></tr>
+        <tr><td><code>getAuthToken()</code></td><td>Lê token do Supabase no localStorage para autenticar o proxy</td></tr>
       </tbody>
     </table>
     </div>
   </div>
 
-  <!-- ── CSS ── -->
+  <!-- CSS -->
   <hr class="doc-divider">
   <div class="doc-section" id="css">
     <div class="doc-h2"><span class="doc-h2-num">19</span>Variáveis CSS</div>
@@ -792,7 +814,7 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
 --green-glow:   rgba(0,255,65,0.3)</pre></div>
   </div>
 
-  <!-- ── IDs ── -->
+  <!-- IDs -->
   <hr class="doc-divider">
   <div class="doc-section" id="ids">
     <div class="doc-h2"><span class="doc-h2-num">20</span>IDs HTML Críticos</div>
@@ -815,7 +837,7 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
     </div>
   </div>
 
-  <!-- ── CONSOLE ── -->
+  <!-- CONSOLE -->
   <hr class="doc-divider">
   <div class="doc-section" id="console">
     <div class="doc-h2"><span class="doc-h2-num">21</span>Comandos de Console</div>
@@ -829,7 +851,7 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
     <div class="console-cmd"><span class="cmd-prompt">&gt;</span><div><div class="cmd-code">console.log(window.STATE);</div><div class="cmd-desc">Inspecionar estado completo</div></div></div>
   </div>
 
-  <!-- ── FLUXO COMPLETO ── -->
+  <!-- FLUXO COMPLETO -->
   <hr class="doc-divider">
   <div class="doc-section" id="fluxo">
     <div class="doc-h2"><span class="doc-h2-num">22</span>Fluxo Completo de Sessão</div>
@@ -844,6 +866,7 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><code>aegis-mobile-nav.js</code> fecha painéis, rebinda eventos</div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><code>initBinBg()</code> → <code>updateHUD()</code> → <code>navigate('home')</code> → <code>initBot()</code> (600ms)</div>
       <div class="flow-step" style="margin-top:12px;"><span class="f-arrow">3.</span><span class="f-hl">Usuário inicia missão</span></div>
+      <div class="flow-step i1"><span class="f-arrow">↳</span><code>POST /api/mission/start</code> → recebe <code>mission_token</code></div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><code>goToStep(1, mission)</code> → <code>onMissionStarted()</code> → <code>scheduleAttack()</code></div>
       <div class="flow-step" style="margin-top:12px;"><span class="f-arrow">4.</span><span class="f-hl">Loki ataca</span></div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><code>disruptAegis()</code> → animação + chat</div>
@@ -851,6 +874,7 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><span class="f-hl">correto → XP + HP + lokiLevel++ → reagenda</span></div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><span class="f-red">errado → HP-- → checkAegisDeath() → reagenda</span></div>
       <div class="flow-step" style="margin-top:12px;"><span class="f-arrow">5.</span><span class="f-hl">Missão concluída</span></div>
+      <div class="flow-step i1"><span class="f-arrow">↳</span><code>POST /api/mission/complete</code> → valida token → registra no Supabase</div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><code>onMissionCompleted()</code> → XP + cura → <code>onMissionEnded()</code></div>
       <div class="flow-step" style="margin-top:12px;"><span class="f-arrow">6.</span><span class="f-red">HP chega a 0 → morte</span></div>
       <div class="flow-step i1"><span class="f-arrow">↳</span><code>triggerAegisDeath()</code> → overlay</div>
@@ -858,7 +882,7 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
     </div>
   </div>
 
-  <!-- ── GLOSSÁRIO ── -->
+  <!-- GLOSSÁRIO -->
   <hr class="doc-divider">
   <div class="doc-section" id="glossario">
     <div class="doc-h2"><span class="doc-h2-num">23</span>Glossário</div>
@@ -872,11 +896,13 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
       <div class="gl-item"><div class="gl-term">lokiLevel</div><div class="gl-def">Nível do Loki. Aumenta a cada bloqueio. Reduz delay entre ataques.</div></div>
       <div class="gl-item"><div class="gl-term">Modal</div><div class="gl-def">Janela de ataque do Loki com choices e timer.</div></div>
       <div class="gl-item"><div class="gl-term">Payload</div><div class="gl-def">Código malicioso exibido no modal de ataque.</div></div>
-      <div class="gl-item"><div class="gl-term">Taunt</div><div class="gl-def">Fala provocativa do Loki (estática ou gerada via IA).</div></div>
+      <div class="gl-item"><div class="gl-term">Taunt</div><div class="gl-def">Fala provocativa do Loki (estática ou gerada via Mistral AI).</div></div>
       <div class="gl-item"><div class="gl-term">Runa</div><div class="gl-def">Recompensa desbloqueada ao concluir missões.</div></div>
       <div class="gl-item"><div class="gl-term">Deck</div><div class="gl-def">Conjunto de flashcards associado a uma missão.</div></div>
       <div class="gl-item"><div class="gl-term">STATE</div><div class="gl-def">Objeto global de estado (<code>window.STATE</code>). Única fonte de verdade.</div></div>
       <div class="gl-item"><div class="gl-term">_grantXP</div><div class="gl-def">Função central de modificação de estado para XP/HP.</div></div>
+      <div class="gl-item"><div class="gl-term">mission_token</div><div class="gl-def">Token gerado pelo server ao iniciar missão. Necessário para registrar conclusão.</div></div>
+      <div class="gl-item"><div class="gl-term">requireAuth</div><div class="gl-def">Middleware Express que valida o JWT do Supabase antes de cada endpoint protegido.</div></div>
       <div class="gl-item"><div class="gl-term">Drawer</div><div class="gl-def">Menu de navegação deslizante no mobile.</div></div>
       <div class="gl-item"><div class="gl-term">Puxador</div><div class="gl-def">Tab lateral para abrir o ÆGIS-BOT no mobile.</div></div>
     </div>
@@ -885,11 +911,9 @@ window.AegisMobile.isMob()         // true se &lt;= 768px</pre></div>
 </main>
 </div>
 
-<!-- Scroll to top -->
 <button class="back-top" id="backTop">[ ↑ topo ]</button>
 
 <script>
-/* ── NAV DATA ── */
 const NAV_DATA = [
   { label:'visão geral', links:[
     {href:'#overview',text:'◈ Introdução'},
@@ -938,7 +962,6 @@ function buildNav(container, extra) {
 buildNav(document.getElementById('sidebarNav'));
 buildNav(document.getElementById('drawerNav'), ' onclick="closeDrawer()"');
 
-/* ── ACTIVE LINK ON SCROLL ── */
 (function(){
   const allLinks = document.querySelectorAll('.ds-link');
   const sections = [];
@@ -961,7 +984,6 @@ buildNav(document.getElementById('drawerNav'), ' onclick="closeDrawer()"');
   onScroll();
 })();
 
-/* ── MOBILE DRAWER ── */
 const drawer  = document.getElementById('mobDrawer');
 const overlay = document.getElementById('mobOverlay');
 function openDrawer(){
@@ -977,7 +999,6 @@ function closeDrawer(){
 document.getElementById('mobMenuBtn').addEventListener('click', openDrawer);
 overlay.addEventListener('click', closeDrawer);
 
-/* ── BINARY RAIN ── */
 (function(){
   const bg = document.getElementById('binBg');
   if(!bg) return;
@@ -996,14 +1017,12 @@ overlay.addEventListener('click', closeDrawer);
   }
 })();
 
-/* ── SCROLL TO TOP ── */
 const backTop = document.getElementById('backTop');
 window.addEventListener('scroll', () => {
   backTop.classList.toggle('visible', window.scrollY > 300);
 }, {passive:true});
 backTop.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
 
-/* ── SMOOTH ANCHOR NAV ── */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
   a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
