@@ -9,14 +9,8 @@ const AI = {
 /* ─── PEGA TOKEN DO SUPABASE ─────────────────────────────── */
 function getAuthToken() {
   try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.includes('supabase') && key.includes('auth')) {
-        const val = JSON.parse(localStorage.getItem(key));
-        if (val?.access_token) return val.access_token;
-        if (val?.session?.access_token) return val.session.access_token;
-      }
-    }
+    const val = JSON.parse(localStorage.getItem('sb-feyuowaurlwctogamzmk-auth-token'));
+    return val?.access_token || null;
   } catch (e) {}
   return null;
 }
