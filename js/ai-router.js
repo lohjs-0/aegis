@@ -6,12 +6,31 @@ const AI = {
   },
 };
 
+/* ─── PEGA TOKEN DO SUPABASE ─────────────────────────────── */
+function getAuthToken() {
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.includes('supabase') && key.includes('auth')) {
+        const val = JSON.parse(localStorage.getItem(key));
+        if (val?.access_token) return val.access_token;
+        if (val?.session?.access_token) return val.session.access_token;
+      }
+    }
+  } catch (e) {}
+  return null;
+}
+
 /* ─── CHAMADA MISTRAL (via servidor) ────────────────────── */
 async function callMistral({ model, systemPrompt, userMessage, maxTokens = 300, temperature = 0.7 }) {
   try {
+    const token = getAuthToken();
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
     const res = await fetch(AI.endpoint, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         model,
         max_tokens:  maxTokens,
@@ -283,4 +302,4 @@ async function sendUserMsg() {
     aiAnswer || `Missão 01 é o ponto de entrada, Guardião. Acesse <span class="hl">Missões</span> no menu e inicie o Escudo de Vidro.`,
     'bot'
   );
-      }
+}
