@@ -327,7 +327,7 @@ app.get('/api/ranking/me', requireAuth, async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   POST
+   POST /api/mission/start
 ═══════════════════════════════════════════════════════════ */
 app.post('/api/mission/start', requireAuth, async (req, res) => {
   const missionId = Number(req.body?.mission_id);
@@ -371,7 +371,7 @@ app.post('/api/mission/start', requireAuth, async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   POST
+   POST /api/mission/complete
 ═══════════════════════════════════════════════════════════ */
 app.post('/api/mission/complete', requireAuth, async (req, res) => {
   if (!SUPABASE_SERVICE_KEY) {
@@ -501,9 +501,9 @@ app.post('/api/mission/complete', requireAuth, async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   POST /api/chat — proxy Mistral
+   POST /api/chat — proxy Mistral (autenticado)
 ═══════════════════════════════════════════════════════════ */
-app.post('/api/chat', async (req, res) => {
+app.post('/api/chat', requireAuth, async (req, res) => {
   if (!MISTRAL_KEY) {
     return res.status(500).json({ error: 'MISTRAL_KEY não configurada no .env' });
   }
