@@ -1,13 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   aegis-lab-patch.js
-   Substitui execTerminalCmd para NÃO mostrar o output direto.
-   Em vez disso: mostra o comando, mostra uma dica parcial,
-   e convida o Guardião a refletir / perguntar ao ÆGIS.
-
-   Incluir no index.html DEPOIS de missions-ui.js:
-   <script src="/js/aegis-lab-patch.js"></script>
-═══════════════════════════════════════════════════════════ */
-
 window.addEventListener('load', function () {
 
   /* ── Dicas por payload — contexto mínimo sem resposta ── */

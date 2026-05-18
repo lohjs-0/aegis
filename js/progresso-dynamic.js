@@ -1,11 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   progresso-dynamic.js — ÆGIS Platform
-   Substitui initProgresso() do main.js por versão totalmente
-   dinâmica: skill tree, runas e histórico de batalhas lidos
-   do STATE real e da activity-feed.
-   Carregar APÓS main.js e activity-feed.js.
-═══════════════════════════════════════════════════════════ */
-
 (function() {
   'use strict';
 

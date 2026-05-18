@@ -1,17 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   missions-ui.js — ÆGIS Platform  v4.2
-   Novos labs:
-   - terminal:    interativo com input real (v3.1)
-   - multiChoice: múltipla escolha técnica
-   - fillBlank:   preencher trechos de código
-   - ordering:    drag-and-drop REAL (mouse + touch)
-   - codeReview:  encontre as N linhas bugadas num bloco
-   - debugTrace:  siga a execução linha a linha e aponte onde explode
-   - threatMap:   ligue vetores de ataque às defesas corretas
-   v4.1: alternativas embaralhadas aleatoriamente em multiChoice e quiz
-   v4.2: startMission e completeMission renomeados para evitar conflito
-         com ranking.js (geração/validação de token de missão)
-═══════════════════════════════════════════════════════════ */
+
 
 /* ─── ESTADO DE MISSÕES ──────────────────────────────────── */
 const MISSION_STATE = {
@@ -35,10 +22,6 @@ function isUnlocked(missionId) {
   } catch(e) {}
 })();
 
-/* ─── _localCompleteMission ──────────────────────────────── */
-/* Atualiza STATE e UI localmente após o servidor confirmar.
-   NÃO chame diretamente — use _finalizeMission() que passa
-   pelo completeMission() do ranking.js (token). */
 function _localCompleteMission(missionId) {
   if (!STATE.completedMissions) STATE.completedMissions = [];
   if (!STATE.completedMissions.includes(missionId))
@@ -59,8 +42,6 @@ function _localCompleteMission(missionId) {
   updateActiveMissionCard();
 }
 
-/* Chamado ao fim do quiz. Usa completeMission() do ranking.js
-   (valida token no servidor) quando disponível. */
 async function _finalizeMission(missionId, xpReward) {
   if (typeof completeMission === 'function') {
     try {
@@ -191,10 +172,6 @@ function openMissionById(id) {
   openBriefing(id);
 }
 
-/* ─── LAUNCH MISSION (substitui startMission local) ─────── */
-/* _launchMission: abre a UI da missão.
-   Não confundir com startMission() do ranking.js
-   que gera o token no servidor. */
 function _launchMission(missionId) {
   const m = MISSIONS_DATA.find(x => x.id === missionId);
   if (!m) return;
@@ -205,9 +182,6 @@ function _launchMission(missionId) {
   MISSION_STATE.currentStep = 1;
   MISSION_STATE.quizIndex   = 0;
 
-  /* Notifica main.js (agenda ataque do Loki etc.)
-     onMissionStarted no main.js também chama startMission()
-     do ranking.js — não chamar aqui de novo. */
   if (typeof onMissionStarted === 'function') onMissionStarted(missionId);
 
   renderMissionDetail(m);
@@ -221,13 +195,9 @@ function _launchMission(missionId) {
   if (typeof persistStateLocally === 'function') persistStateLocally();
 }
 
-/* Chamada pelo botão [ iniciar missão → ] no briefing.
-   Solicita token ao servidor via startMission() do ranking.js,
-   depois abre a missão. */
 async function _launchMissionFromBriefing(missionId) {
   closeBriefing();
 
-  /* startMission() vem do ranking.js — gera token no servidor */
   if (typeof startMission === 'function') {
     try {
       await startMission(missionId);

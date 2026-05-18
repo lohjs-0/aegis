@@ -1,13 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   personalities.js  — v5.0
-   ÆGIS com conhecimento completo da plataforma:
-   - Missões (todas as 6, vetores, XP, dificuldade, steps)
-   - Flashcards, Simulados, Estudos, Ranking, Progresso
-   - Labs por tipo (terminal, multiChoice, fillBlank, ordering)
-   - Personalidade original intacta
-═══════════════════════════════════════════════════════════ */
-
-
 /* ─── getState ─────────────────────────────────────────── */
 function getState() {
   return window.STATE || {
@@ -22,16 +12,10 @@ function getState() {
 }
 
 
-/* ═══════════════════════════════════════════════════════════
-   CONHECIMENTO DA PLATAFORMA — injetado no system prompt
-   Gerado a partir dos dados reais de missions-data.js
-═══════════════════════════════════════════════════════════ */
 function _buildPlatformKnowledge() {
-  /* Tenta ler dados reais do MISSIONS_DATA em runtime */
   const live = (typeof MISSIONS_DATA !== 'undefined' && Array.isArray(MISSIONS_DATA))
     ? MISSIONS_DATA : null;
 
-  /* Missões — estrutura fixa baseada nos dados reais */
   const MISSIONS_STATIC = [
     {
       id: 1, title: 'O Escudo de Vidro', vector: 'Command Injection',

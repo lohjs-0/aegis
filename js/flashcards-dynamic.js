@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   flashcards-dynamic.js — ÆGIS Platform
-   Torna o deck list e o nav badge de flashcards dinâmicos,
-   baseados nas missões desbloqueadas/concluídas do STATE.
-═══════════════════════════════════════════════════════════ */
+
 
 (function() {
   'use strict';

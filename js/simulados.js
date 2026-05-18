@@ -1,27 +1,14 @@
 /* ═══════════════════════════════════════════════════════════
-   simulados.js — ÆGIS Platform  v1.0
-   Engine completa da sessão de simulados.
-
-   Depende de:
-     - missions-data.js  (MISSIONS_DATA — banco de questões)
-     - main.js           (STATE, updateHUD, _grantXP, botSay)
-     - missions-attacks.js (startLokiAttacks, stopLokiAttacks)
-
-   Integra com ranking.js via STATE (Proxy detecta mudança de score).
-   Persiste histórico em localStorage isolado por userId.
-═══════════════════════════════════════════════════════════ */
-
-/* ═══════════════════════════════════════════════════════════
    CONFIGURAÇÃO
 ═══════════════════════════════════════════════════════════ */
 const SIM_CONFIG = {
   totalQuestions:   10,
-  timerCronometrado: 60,   // segundos por questão
-  xpBase:           100,   // XP por simulado concluído
-  xpBonus80:         50,   // acima de 80%
-  xpPerCorrect:      20,   // por questão certa
-  xpPenalty:         10,   // por questão errada (cronometrado)
-  maxHistory:        10,   // entradas no histórico
+  timerCronometrado: 60,   
+  xpBase:           100,   
+  xpBonus80:         50,   
+  xpPerCorrect:      20,   
+  xpPenalty:         10,   
+  maxHistory:        10,   
 };
 
 /* ═══════════════════════════════════════════════════════════
@@ -29,13 +16,13 @@ const SIM_CONFIG = {
 ═══════════════════════════════════════════════════════════ */
 const SIM_STATE = {
   active:       false,
-  mode:         null,        // 'cronometrado' | 'livre'
-  questions:    [],          // pool embaralhado
+  mode:         null,        
+  questions:    [],          
   currentIdx:   0,
   correct:      0,
   wrong:        0,
   skipped:      0,
-  answers:      [],          // { q, chosen, correct, time }
+  answers:      [],          
   timerInterval: null,
   timerLeft:    0,
   startedAt:    0,
@@ -66,11 +53,6 @@ function _simLoadHistory() {
   } catch(e) { return []; }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   CONSTRUÇÃO DO BANCO DE QUESTÕES
-   Coleta quiz de todas as missões desbloqueadas e/ou completas.
-   Mantém metadado da missão-origem para breakdown no resultado.
-═══════════════════════════════════════════════════════════ */
 function _buildQuestionPool() {
   if (typeof MISSIONS_DATA === 'undefined') return [];
 
@@ -93,18 +75,14 @@ function _buildQuestionPool() {
       });
     });
 
-    // questões dos ataques temáticos (missions-attacks.js)
     const themed = (typeof ATTACKS_BY_MISSION !== 'undefined')
       ? (ATTACKS_BY_MISSION[m.id] || [])
       : [];
 
     themed.forEach(atk => {
       atk.choices.forEach((choice, ci) => {
-        // só inclui a choice correta como questão estilo "qual defesa usar"
-        // transforma attack em questão de múltipla escolha
       });
 
-      // monta questão a partir do ataque
       pool.push({
         q:            `Frente ao payload "${atk.payload}" (${atk.type}), qual a defesa correta?`,
         opts:         atk.choices.map(c => c.t),
@@ -158,10 +136,8 @@ function startSimulado(mode) {
   SIM_STATE.answers     = [];
   SIM_STATE.startedAt   = Date.now();
 
-  // marca modal ativo para pausar outros sistemas
   if (window.STATE) window.STATE.modalActive = true;
 
-  // Loki ataca durante o simulado (modo cronometrado apenas)
   if (mode === 'cronometrado' && typeof startLokiAttacks === 'function') {
     startLokiAttacks();
     SIM_STATE.lokiActive = true;
@@ -198,12 +174,10 @@ function _renderSimSession() {
   const container = _getSimContainer();
   if (!container) return;
 
-  // oculta a tela de escolha de modo
   const chooseSection = document.querySelector('#view-simulados .sim-header');
   const modesSection  = document.querySelector('#view-simulados .sim-modes');
   const bonusSection  = document.querySelector('#view-simulados .section-title');
   [chooseSection, modesSection].forEach(el => { if (el) el.style.display = 'none'; });
-  // oculta todos os filhos exceto o container de sessão
   Array.from(document.querySelector('#view-simulados')?.children || []).forEach(child => {
     if (child.id !== 'sim-session-container') child.style.display = 'none';
   });
@@ -756,15 +730,10 @@ function _simRenderHistory() {
     ${rows}`;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   INIT — chamado quando a view de simulados é aberta
-═══════════════════════════════════════════════════════════ */
 function initSimulados() {
-  // remove o placeholder estático de histórico (o inline do index.html)
   const view = document.getElementById('view-simulados');
   if (!view) return;
 
-  // remove o div estático de histórico (tem texto "nenhum simulado")
   view.querySelectorAll('div').forEach(el => {
     if (el.textContent.includes('nenhum simulado concluído ainda') && !el.id) {
       el.remove();
@@ -773,9 +742,3 @@ function initSimulados() {
 
   _simRenderHistory();
 }
-
-/* ═══════════════════════════════════════════════════════════
-   ESTILOS — ver simulados.css
-   Adicionar no <head> do index.html:
-   <link rel="stylesheet" href="/css/simulados.css">
-═══════════════════════════════════════════════════════════ */

@@ -1,18 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   missions-attacks.js — ÆGIS Platform  v3.0
-   Sistema de ataques com escalada real por missão:
-   - Pool base para missão 1 (Command Injection)
-   - Pools temáticos por missão — ataques precisos ao vetor estudado
-   - Dificuldade progressiva: timer menor, intervalo menor, rafaga
-   - Missão 6: APT contínuo — 50% rafaga, até 3 ataques em sequência
-   - Modal de ataque com timer visual e consequências de falha
 
-   Depende de: missions-data.js, missions-ui.js, main.js
-═══════════════════════════════════════════════════════════ */
-
-/* ═══════════════════════════════════════════════════════════
-   POOL BASE — Command Injection (missões 1–2 sem tema)
-═══════════════════════════════════════════════════════════ */
 const ATTACKS = [
   {
     payload: 'report.pdf; cat /etc/passwd',

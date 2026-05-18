@@ -209,28 +209,43 @@ window._grantXP({
 
 ```
 Frontend   →  HTML + CSS + Vanilla JavaScript
-Backend    →  Supabase
-Database   →  PostgreSQL
+Backend    →  Node.js + Express
+Database   →  PostgreSQL (Supabase)
+Auth       →  Supabase Auth
 Deploy     →  Netlify / Vercel / GitHub Pages
 Build      →  No bundlers / zero dependencies
+```
+
+
+---
+
+## `// Dependencies`
+
+```
+express       ^4.18.2   →  HTTP server
+cors          ^2.8.5    →  Cross-origin requests
+dotenv        ^16.4.5   →  Environment variables
+node-fetch    ^2.7.0    →  Server-side fetch
+nodemon       ^3.1.0    →  Dev auto-reload
 ```
 
 ---
 
 ## `// Local Setup`
 
-ES modules require an HTTP server.
-
 ```bash
-# Python
-python -m http.server 8080
+# install dependencies
+npm install
 
-# Node
-npx serve .
+# run dev server
+npm run dev
+
+# run production
+npm start
 ```
 
 ```
-http://localhost:8080
+http://localhost:3000
 ```
 
 ---

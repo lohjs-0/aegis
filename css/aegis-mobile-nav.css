@@ -1,18 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   ÆGIS — MOBILE NAV (fusão de mobile.css + aegis-mobile-nav.css)
-
-   Z-INDEX MAP:
-     .bin-bg          →   0
-     .wrapper/.main   →   1-2
-     #mob-overlay     → 290
-     .sidebar         → 300
-     .bot-panel       → 340
-     #mob-bot-puller  → 341
-     #mob-topbar      → 1000
-     #mob-nav-drawer  → 1110
-     #ns-overlay      → 99999
-═══════════════════════════════════════════════════════════ */
-
 /* ── Reset desktop ── */
 #mob-topbar      { display: none; }
 #mob-bot-btn     { display: none; }

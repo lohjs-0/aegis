@@ -67,11 +67,6 @@ function updateHUD() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   _grantXP — FONTE ÚNICA DE PONTUAÇÃO (efeitos locais)
-   Nota: pontuação de missões é confirmada pelo servidor via
-   completeMission(). _grantXP cuida de HP, bloqueios Loki, etc.
-═══════════════════════════════════════════════════════════ */
 window._grantXP = function(opts) {
   const S = window.STATE;
 
@@ -94,7 +89,6 @@ window._grantXP = function(opts) {
   if (opts.hp && opts.hp < 0) checkAegisDeath();
 };
 
-/* ─── LOKI: só ataca quando há missão ativa ─────────────── */
 function lokiCanAttack() {
   return (
     typeof MISSION_STATE !== 'undefined' &&
@@ -109,7 +103,6 @@ function onMissionStarted(missionId) {
   }
   if (lokiCanAttack()) scheduleAttack();
 
-  /* Solicita token de missão ao servidor para validação posterior */
   if (typeof startMission === 'function' && missionId) {
     startMission(missionId).catch(e => {
       console.warn('[main] startMission erro:', e?.message);
@@ -124,19 +117,10 @@ function onMissionEnded() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   onMissionCompleted
-   - Atualiza HP local
-   - Chama completeMission() que valida o token no servidor
-     e só então confirma missão + score no banco
-   - Se completeMission não estiver disponível (offline),
-     cai no fluxo legado com syncRankingScore
-═══════════════════════════════════════════════════════════ */
 function onMissionCompleted(missionId, xpReward) {
   const S = window.STATE;
   if (S.completedMissions.includes(missionId)) return;
 
-  /* HP: cura local imediata (experiência do usuário) */
   if (S.aegisHp < 100) {
     S.aegisHp = Math.min(100, (S.aegisHp || 0) + 15);
     updateHUD();
@@ -145,15 +129,11 @@ function onMissionCompleted(missionId, xpReward) {
 
   onMissionEnded();
 
-  /* Valida e persiste no servidor via token de missão.
-     completeMission() atualiza S.completedMissions e S.score
-     com os valores confirmados pelo banco. */
   if (typeof completeMission === 'function') {
     completeMission(missionId, xpReward).catch(e => {
       console.warn('[main] completeMission erro:', e?.message);
     });
   } else {
-    /* Fallback offline: atualiza localmente e sincroniza */
     const xp = xpReward || 200;
     if (!S.completedMissions.includes(missionId)) {
       S.completedMissions.push(missionId);
@@ -578,7 +558,7 @@ function closeLokiModal() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   BOT HELPERS — appendMsg, botSay, renderQR, showQR, hideQR
+   BOT HELPERS
 ═══════════════════════════════════════════════════════════ */
 function appendMsg(html, cls = 'bot', extra = '') {
   const area = document.getElementById('chatArea');
@@ -1122,12 +1102,6 @@ function updateRechargeBtn() {
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   INIT
-   IMPORTANTE: restoreStateFromLocal() NÃO é chamado aqui.
-   É chamado pelo aegis:session-ready no ranking.js, após
-   o user_id estar disponível — evita vazar estado entre contas.
-═══════════════════════════════════════════════════════════ */
 window.addEventListener('load', () => {
   if (!window.STATE.completedMissions) window.STATE.completedMissions = [];
 

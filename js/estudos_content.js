@@ -1,14 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════
-   estudos_content.js  —  v3.0 (expandido + SVGs)
-   Todo o conteúdo da seção de estudos.
-   Carregar ANTES de estudos.js no HTML:
-     <script src="estudos_content.js"></script>
-     <script src="estudos.js"></script>
-═══════════════════════════════════════════════════════════════ */
 
-/* ─────────────────────────────────────────────────────────
-   SVG ICONS LIBRARY
-───────────────────────────────────────────────────────── */
 var SVGI = {
   /* Geral */
   shield:

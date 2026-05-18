@@ -1,14 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   ÆGIS — AUTH SCREEN  v8.1
-   Fix v8.1:
-   - aegis:nick-set disparado com delay de 300ms para garantir
-     que ranking.js v9.3 execute _handleAccountSwitch() antes
-     de processar o evento, evitando race condition que causava
-     score da conta anterior aparecer na conta nova.
-   - restoreStateFromServer NÃO restaura score/blocks/fails.
-     Isso é responsabilidade exclusiva do ranking.js (v9.3).
-═══════════════════════════════════════════════════════════ */
-
 (function () {
   const SUPABASE_URL  = 'https://feyuowaurlwctogamzmk.supabase.co';
   const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleXVvd2F1cmx3Y3RvZ2Ftem1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTI5OTgsImV4cCI6MjA5MzkyODk5OH0.1hbK0qhgBLtKSaiMHzkYs4AOeDroZMf6xn2FyTmBKNM';
@@ -94,14 +83,6 @@
     return res.ok;
   }
 
-  /* ── [v8.1] Restaura STATE com dados do servidor ──────────
-     ✅ CORRIGIDO: NÃO restaura score, blocks, fails, lokiLevel.
-     O ranking.js v9.3 é autoritário para contas Google e
-     sincroniza esses valores direto do banco.
-     Restaurar aqui causava o Proxy a salvar valores antigos
-     de volta no banco antes do ranking.js sincronizar.
-     Aqui só restauramos: missões completadas e aegisHp.
-  ─────────────────────────────────────────────────────── */
   function restoreStateFromServer(entry) {
     if (!entry) return;
     function tryRestore(attempts) {
@@ -111,9 +92,6 @@
         return;
       }
       if (!S) return;
-
-      /* ✅ NÃO toca em score, blocks, fails, lokiLevel.
-         ranking.js v9.3 cuida disso com autoridade do servidor. */
 
       if (entry.aegis_hp != null) S.aegisHp = entry.aegis_hp;
 
@@ -615,9 +593,6 @@
         document.body.classList.remove('ns-active');
         requestAnimationFrame(() => {
           forceMobileClosed();
-          /* ✅ v8.1: delay de 300ms para garantir que ranking.js
-             execute _handleAccountSwitch() antes de processar
-             o aegis:nick-set, evitando race condition. */
           setTimeout(() => {
             window.dispatchEvent(new CustomEvent('aegis:nick-set', {
               detail: { nick, user: userData }
@@ -790,8 +765,6 @@
     window.__aegisNickReady  = { nick, ts: Date.now() };
     window.__aegisServerData = entry;
 
-    /* ✅ restoreStateFromServer NÃO toca em score/blocks/fails.
-       ranking.js v9.3 sincroniza esses valores com autoridade do servidor. */
     restoreStateFromServer(entry);
 
     window.dispatchEvent(new CustomEvent('aegis:nick-set', {

@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   activity-feed.js — ÆGIS Platform
-   Sistema de atividades recentes em tempo real.
-   Registra eventos reais e renderiza no #view-home.
-═══════════════════════════════════════════════════════════ */
+
 
 (function() {
   'use strict';
@@ -13,9 +9,8 @@
     return 'aegis_activity:' + uid;
   }
 
-  /* ─── CONSTANTES ──────────────────────────────────────── */
-  var MAX_EVENTS = 20; // máximo no storage
-  var MAX_RENDER = 8;  // máximo exibido na tela
+  var MAX_EVENTS = 20; 
+  var MAX_RENDER = 8;
 
   var ICONS = {
     mission_start:    { icon: '⊞', color: 'var(--green)' },
@@ -55,8 +50,6 @@
     log: function(type, label, detail) {
       var events = loadEvents();
       var now    = Date.now();
-
-      // Deduplicar: não registrar o mesmo tipo+label em menos de 3s
       if (events.length > 0) {
         var last = events[0];
         if (last.type === type && last.label === label && (now - last.ts) < 3000) {
@@ -407,10 +400,8 @@
     }
   }
 
-  /* ── Eventos iniciais baseados no STATE real ── */
   function _seedInitialEvents() {
     var existing = loadEvents();
-    // Só faz seed se não há eventos ainda
     if (existing.length > 0) {
       renderActivityFeed();
       return;
@@ -422,15 +413,13 @@
     var events = [];
     var now    = Date.now();
 
-    // Conta criada — sempre o mais antigo
     events.push({
       type: 'account_created',
       label: '<span>Conta</span> criada — Guardião ativado',
       detail: null,
-      ts: now - 86400000, // ontem
+      ts: now - 86400000,
     });
 
-    // Loki detectado
     events.push({
       type: 'loki_fail',
       label: '<span style="color:var(--red)">Loki</span> detectado — aguardando missão ativa',
@@ -438,7 +427,6 @@
       ts: now - 60000,
     });
 
-    // Missões concluídas
     if (Array.isArray(S.completedMissions)) {
       S.completedMissions.forEach(function(mid, i) {
         var m = (typeof MISSIONS_DATA !== 'undefined')
@@ -453,7 +441,6 @@
       });
     }
 
-    // Módulos de estudos concluídos
     if (typeof STUDY_STATE !== 'undefined' && Array.isArray(STUDY_STATE.completedModules)) {
       STUDY_STATE.completedModules.forEach(function(mid, i) {
         var mod = (typeof STUDY_MODULES !== 'undefined')
@@ -502,11 +489,9 @@
     return str.length > max ? str.substring(0, max) + '…' : str;
   }
 
-  /* ─── EXPOR renderActivityFeed globalmente ────────────── */
+  
   window.renderActivityFeed = renderActivityFeed;
 
-  /* ─── Re-renderiza quando navega para home ──────────────
-     Sobrescreve navigate para injetar o refresh               */
   var _origNavigate = window.navigate;
   window.addEventListener('load', function() {
     setTimeout(function() {

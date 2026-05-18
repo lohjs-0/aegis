@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   ÆGIS — MOBILE NAV (fusão de mobile.js + aegis-mobile-nav.js)
-   FIX: mob-nav-btn agora faz clone+replace igual ao burger/puller
-        evita listeners duplicados ao chamar bind() mais de uma vez
-═══════════════════════════════════════════════════════════ */
+
 (function () {
   'use strict';
 

@@ -1,30 +1,3 @@
-/* ═══════════════════════════════════════════════════════════════
-   estudos.js  —  v6.0
-   INTEGRAÇÃO COM ranking.js v9.0:
-   - [v6.0] injectStudyXpIntoState: dispara "aegis:xp-ready" após
-            injetar XP. Isso substitui o setTimeout(1200ms) arbitrário
-            do ranking.js antigo. O gate de eventos garante que o save
-            no Supabase só ocorre com o score correto.
-   - [v6.0] onModuleCompleted: removido setTimeout(1500ms) para
-            saveScoreToRanking — o Proxy do STATE (ranking.js v9)
-            detecta a mudança de score e dispara o save automaticamente
-            via debounce. Sem chamadas manuais, sem race conditions.
-   - [v6.0] _flushState: removida chamada a syncRankingScore() —
-            o Proxy do STATE cuida do debounce e save. Manter a chamada
-            causava double-save e potencial race condition.
-   - [v6.0] Listener aegis:nick-set: removido loadStudyProgress() +
-            injectStudyXpIntoState() redundantes — o ranking.js v9
-            já chama syncFromServer() que restaura o STATE com Math.max.
-            O evento aegis:xp-ready (disparado no init) garante o XP.
-   FIXES ANTERIORES MANTIDOS (v5.1, v5, v4.1):
-   - v5.1: setupScrollToBottomDetector com touchmove (iOS Safari),
-           threshold 0.75, fallback sem scroll.
-   - v5.1: setupSectionObservers com root: panel, threshold: 0.2.
-   - v5.1: detachScrollHandler remove touchmove também.
-   - v5:   injectStudyXpIntoState soma XP (não sobrescreve).
-   - v4.1: chave de storage isolada por userId.
-═══════════════════════════════════════════════════════════════ */
-
 var XP_PER_MODULE = 100;
 
 /* ─────────────────────────────────────────────────────────
@@ -217,16 +190,6 @@ function completeModule(moduleId) {
   }
 }
 
-/* ─────────────────────────────────────────────────────────
-   onModuleCompleted  [v6.0 — sem save manual]
-
-   MUDANÇA v6.0:
-     Removido setTimeout(1500ms) + saveScoreToRanking() manual.
-     _estudosGrant() altera S.score → o Proxy do STATE detecta
-     e agenda _debouncedSave(1200ms) automaticamente.
-     Isso elimina a race condition onde o save ocorria antes
-     do Proxy processar a mudança de score.
-───────────────────────────────────────────────────────── */
 function onModuleCompleted(moduleId) {
   var mod = STUDY_MODULES.find(function(m) { return m.id === moduleId; });
   if (!mod) return;
@@ -1048,25 +1011,6 @@ function handleStudyGameOver() {
   _flushState();
   setTimeout(scheduleNextLokiAttack, 60000);
 }
-
-
-/* ═══════════════════════════════════════════════════════════════
-   LISTENER aegis:nick-set  [v6.0 — simplificado]
-
-   MUDANÇA v6.0:
-     Removidos loadStudyProgress() + injectStudyXpIntoState()
-     redundantes. O ranking.js v9 já chama syncFromServer() que
-     restaura o STATE com Math.max (nunca regride).
-     O aegis:xp-ready disparado no loadStudyProgress() do init
-     garante que o XP dos módulos é somado antes do save.
-     Re-injetar aqui causava double-dispatch de aegis:xp-ready.
-═══════════════════════════════════════════════════════════════ */
-/* (listener removido — ranking.js v9 cuida da sincronização) */
-
-
-/* ═══════════════════════════════════════════════════════════════
-   UTILITÁRIOS
-═══════════════════════════════════════════════════════════════ */
 
 function el(tag, className) {
   var e = document.createElement(tag);

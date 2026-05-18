@@ -1,8 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   ÆGIS — MISSIONS MOBILE FIX (completo)
-   Cobre: briefing modal, mission cards, terminal lab,
-          quiz, fillblank, ordering, nav btns, steps bar
-═══════════════════════════════════════════════════════════ */
+
 
 @media (max-width: 768px) {
 
@@ -185,11 +181,11 @@
     line-height: 1.6 !important;
   }
 
-  /* Payload box: texto do payload quebra, botão vai pra linha de baixo */
+
   .tl-payload-box { padding: 10px 12px !important; }
 
   .tl-prompt-line {
-    align-items: flex-start !important;   /* era center — causava corte */
+    align-items: flex-start !important; 
     flex-wrap: wrap !important;
     gap: 8px !important;
   }
@@ -205,7 +201,7 @@
   }
 
   .tl-exec-btn {
-    width: 100% !important;             /* full-width em mobile */
+    width: 100% !important;             
     margin-top: 8px !important;
     padding: 8px !important;
     font-size: 11px !important;
@@ -293,7 +289,7 @@
   .nav-btns button {
     width: 100% !important;
     text-align: center !important;
-    min-height: 42px !important;        /* touch target acessível */
+    min-height: 42px !important;        
     font-size: 11px !important;
   }
 

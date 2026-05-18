@@ -1,23 +1,8 @@
-/* ═══════════════════════════════════════════════════════════
-   ranking.js — ÆGIS Platform
-   SEGURANÇA:
-   - saveScoreToRanking → POST /api/ranking/save (servidor recalcula score)
-   - fetchRanking       → GET  /api/ranking      (leitura pública)
-   - syncFromServer     → GET  /api/ranking/me   (dados do usuário)
-   - startMission       → POST /api/mission/start    (gera token de missão)
-   - completeMission    → POST /api/mission/complete  (valida token e conclui)
-   - Score do banco é autoritativo — frontend corrige STATE após cada save
-   - Nenhuma escrita vai direto ao Supabase — tudo passa pelo servidor
-   - localStorage isolado por user_id — troca de conta zera tudo
-   - aegis:session-ready limpa chaves de outras contas antes do sync
-   - initRanking: syncFromServer ANTES do save — evita enviar zeros
-═══════════════════════════════════════════════════════════ */
-
 const SUPABASE_URL  = "https://feyuowaurlwctogamzmk.supabase.co";
 const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZleXVvd2F1cmx3Y3RvZ2Ftem1rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNTI5OTgsImV4cCI6MjA5MzkyODk5OH0.1hbK0qhgBLtKSaiMHzkYs4AOeDroZMf6xn2FyTmBKNM";
 
 const NICK_KEY    = "aegis_guardian_nick";
-const PERSIST_KEY = "aegis_state_persist"; // sufixado com user_id
+const PERSIST_KEY = "aegis_state_persist"; 
 
 function _getPersistKey() {
   const uid = _getUserId();
@@ -639,25 +624,12 @@ function renderRankingList(rows, myNick) {
   if (rankPosEl) rankPosEl.textContent = myPos >= 0 ? "#" + (myPos + 1) : "#—";
 }
 
-/* ═══════════════════════════════════════════════════════════
-   INIT RANKING
-   FIX: syncFromServer ANTES do save — garante que o STATE
-   tenha os valores do banco antes de qualquer envio,
-   evitando sobrescrever fails/blocks/score com zeros
-   quando o localStorage está vazio (ex: após limpeza).
-═══════════════════════════════════════════════════════════ */
 async function initRanking() {
   const nick = getNickname();
 
-  // 1. Restaura localStorage (pode estar vazio — tudo bem)
   restoreStateFromLocal();
   if (typeof updateHUD === 'function') updateHUD();
-
-  // 2. Sincroniza do servidor ANTES de salvar
-  //    → STATE fica correto com os valores reais do banco
   await syncFromServer();
-
-  // 3. Agora salva com o STATE já populado corretamente
   if (nick) await saveScoreToRanking(nick);
 
   await refreshRankingView(nick);

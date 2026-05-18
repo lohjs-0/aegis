@@ -1,7 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   ÆGIS — NICK SCREEN LAYOUT FIX v3
-   Corrige: corte mobile + centralização desktop
-═══════════════════════════════════════════════════════════ */
+
 
 /* ── 1. Raiz sem scroll horizontal ── */
 html, body {
@@ -12,7 +9,7 @@ html, body {
 #ns-overlay {
   position: fixed !important;
   inset: 0 !important;
-  width: 100% !important;       /* NÃO usar 100vw aqui */
+  width: 100% !important;       
   height: 100% !important;
   overflow: hidden !important;
   display: flex !important;
@@ -127,6 +124,6 @@ html, body {
     font-size: 10px !important;
   }
   #ns-overlay .ns-status-bar {
-    display: none !important; /* esconde em telas muito pequenas */
+    display: none !important; 
   }
 }

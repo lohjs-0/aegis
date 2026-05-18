@@ -1,10 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   ai-router.js — ÆGIS Platform
-   IA: Mistral via servidor Express local (/api/chat)
-   A key fica protegida no backend — nunca exposta no frontend.
-═══════════════════════════════════════════════════════════ */
 
-/* ─── CONFIG ─────────────────────────────────────────────── */
 const AI = {
   endpoint: '/api/chat',   /* proxiado pelo server.js */
   models: {

@@ -1,30 +1,8 @@
-/* ═══════════════════════════════════════════════════════════
-   missions-data.js — ÆGIS Platform  v3.0
-   v3.0 — Labs interativos + dificuldade escalada + quiz duro
-   Cada missão agora tem:
-   - Step 1: Contexto + diagrama
-   - Step 2: Código vulnerável + simulação de ataque interativa
-   - Step 3: Lab prático (terminal/code editor/múltipla escolha técnica)
-   - Step 4: Defesa com code diff interativo
-   - Step 5: Checkpoint quiz — perguntas técnicas, sem moleza
-═══════════════════════════════════════════════════════════ */
 
-/* ═══════════════════════════════════════════════════════════
-   LAB RENDERER — injetado por missions-ui.js
-   Tipos de lab:
-   - terminal: simula terminal interativo com comandos
-   - codeFix: o guardião corrige o código
-   - multiChoice: pergunta técnica com 4 opções (sem dica)
-   - ordering: arrastar linhas de código na ordem certa
-   - fillBlank: preencher o trecho que falta
-═══════════════════════════════════════════════════════════ */
 
 const MISSIONS_DATA = [
 
-  /* ═══════════════════════════════════════════════════════
-     MISSÃO 01 — O Escudo de Vidro (Command Injection)
-     Dificuldade: ★☆☆☆☆  →  Introdução
-  ═══════════════════════════════════════════════════════ */
+ 
   {
     id: 1,
     slug: 'escudo-de-vidro',
@@ -1432,10 +1410,6 @@ if (res.status >= 300 && res.status < 400)
     ],
   },
 
-  /* ═══════════════════════════════════════════════════════
-     MISSÃO 05 — A Cadeia Envenenada (Supply Chain)
-     Dificuldade: ★★★★☆  →  avançado
-  ═══════════════════════════════════════════════════════ */
   {
     id: 5,
     slug: 'cadeia-envenenada',

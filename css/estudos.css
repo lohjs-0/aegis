@@ -1,9 +1,4 @@
-/* ═══════════════════════════════════════════════════════════════
-   estudos.css  —  v3.4
-   Fix principal: .study-layout sem overflow:hidden
-   O scroll acontece DENTRO de .study-content-panel (flex:1 + overflow-y:auto)
-   Isso garante que a nav inferior NUNCA seja cortada.
-═══════════════════════════════════════════════════════════════ */
+
 
 :root {
   --study-bg: #0a0c0f;
@@ -36,18 +31,12 @@
   display: block;
 }
 
-/* ══════════════════════════════════════════
-   LAYOUT PRINCIPAL
-   CRÍTICO: sem overflow:hidden aqui.
-   O scroll é interno ao .study-content-panel.
-══════════════════════════════════════════ */
 .study-layout {
   display: flex;
   height: calc(100vh - 120px);
   min-height: 480px;
   position: relative;
   background: var(--study-bg);
-  /* NÃO colocar overflow:hidden aqui — cortava a nav inferior */
 }
 
 /* ── Sidebar ── */
@@ -187,9 +176,6 @@
   font-family: var(--study-font-mono);
 }
 
-/* ── Painel de conteúdo ──
-   flex:1 + overflow-y:auto = scrola internamente.
-   A nav inferior fica DENTRO desse scroll, sempre acessível. */
 .study-content-panel {
   flex: 1;
   overflow-y: auto;

@@ -1,12 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   ÆGIS DEATH SYSTEM
-   - checkAegisDeath(): dispara animação quando HP chega a 0
-   - triggerAegisDeath(): morte do ÆGIS-BOT + Loki celebra
-   - reviveAegis(): revive o ÆGIS após tela de morte
-   - Sistema de Recarga de Integridade (heal passivo/ativo)
-═══════════════════════════════════════════════════════════ */
 
-/* ── CSS de morte (injetado uma vez) ────────────────────── */
 (function injectDeathStyles() {
   if (document.getElementById('aegisDeathStyles')) return;
   const s = document.createElement('style');
@@ -184,20 +176,16 @@
   document.head.appendChild(s);
 })();
 
-/* ── checkAegisDeath: chamada após cada dano ────────────── */
 function checkAegisDeath() {
   const hp = window.STATE?.aegisHp ?? 100;
   if (hp <= 0) {
-    /* Pequeno delay para o HUD atualizar antes da animação */
     setTimeout(triggerAegisDeath, 400);
   } else if (hp <= 30) {
-    /* Estado crítico — HP bar pisca */
     const bar = document.getElementById('aegisHpBar');
     if (bar) bar.classList.add('hp-critical');
   }
 }
 
-/* ── Loki celebra — frases aleatórias ──────────────────── */
 const LOKI_VICTORY_LINES = [
   'O ÆGIS caiu. Como esperado.\nVocê não era páreo para mim, Guardião.',
   'Integridade: ZERO.\nSeu sistema pertence a mim agora.',
@@ -206,7 +194,6 @@ const LOKI_VICTORY_LINES = [
   'Isso não é o fim.\nÉ só o começo do que posso fazer com acesso total.',
 ];
 
-/* ── triggerAegisDeath: animação completa ───────────────── */
 function triggerAegisDeath() {
   const S = window.STATE;
 
@@ -334,16 +321,6 @@ function reviveAegis() {
   console.log('[aegis] sistema reanimado — hp: 40%');
 }
 
-/* ═══════════════════════════════════════════════════════════
-   SISTEMA DE RECARGA DE INTEGRIDADE
-   - Passivo: +2% a cada 30s (apenas durante missão ativa)
-   - Flashcard: +3% ao virar card
-   - Quiz correto: +2% por resposta certa
-   - Botão manual: +10% com cooldown de 60s
-   - Completar missão: +15%
-═══════════════════════════════════════════════════════════ */
-
-/* Heal passivo — roda a cada 30s quando missão ativa */
 (function startPassiveHeal() {
   setInterval(() => {
     const S = window.STATE;

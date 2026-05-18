@@ -1,13 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   server.js — ÆGIS Platform
-   SEGURANÇA:
-   - Score NUNCA é aceito do frontend — servidor recalcula do zero
-   - Único input confiável: completed_missions + blocks (com teto)
-   - Tentativas de cheat são logadas e bloqueadas
-   - SERVICE_ROLE key nunca exposta no frontend
-   - fails/blocks só sobem, aegis_hp só cai — nunca sobrescritos por zero
-═══════════════════════════════════════════════════════════ */
-
 require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
@@ -17,8 +7,6 @@ const crypto  = require('crypto');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
-
-/* ─── Configurações ──────────────────────────────────────── */
 const SUPABASE_URL         = process.env.SUPABASE_URL || 'https://feyuowaurlwctogamzmk.supabase.co';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SUPABASE_ANON_KEY    = process.env.SUPABASE_ANON_KEY;
@@ -42,16 +30,9 @@ const MAX_LOKI_BLOCKS_TOTAL = 200;
 const MAX_FAILS             = 9999;
 const HP_MIN                = 0;
 const HP_MAX                = 100;
-
-/* ═══════════════════════════════════════════════════════════
-   TOKENS DE MISSÃO em memória
-   { token → { userId, missionId, expiresAt } }
-   TTL de 2 horas — suficiente para qualquer sessão normal.
-═══════════════════════════════════════════════════════════ */
 const _missionTokens = new Map();
-const MISSION_TOKEN_TTL = 2 * 60 * 60 * 1000; // 2h em ms
+const MISSION_TOKEN_TTL = 2 * 60 * 60 * 1000;
 
-/* Limpa tokens expirados a cada 30min */
 setInterval(() => {
   const now = Date.now();
   for (const [token, data] of _missionTokens) {
@@ -60,7 +41,7 @@ setInterval(() => {
 }, 30 * 60 * 1000);
 
 /* ═══════════════════════════════════════════════════════════
-   recalculateScore — ÚNICA fonte de verdade para o score
+   recalculateScore
 ═══════════════════════════════════════════════════════════ */
 function recalculateScore(completedMissions, rawBlocks) {
   const missions    = Array.isArray(completedMissions) ? completedMissions : [];
@@ -160,10 +141,6 @@ function validateBasicPayload(body) {
   return errors;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   fetchCurrentStats — busca estado atual do banco
-   Protege fails, aegis_hp e blocks contra sobrescrita por zero
-═══════════════════════════════════════════════════════════ */
 async function fetchCurrentStats(userId) {
   try {
     const r = await fetch(
@@ -212,16 +189,13 @@ app.post('/api/ranking/save', requireAuth, async (req, res) => {
     req.body.blocks
   );
 
-  /* Busca valores atuais do banco para proteger fails, aegis_hp e blocks */
   const current = await fetchCurrentStats(req.userId);
 
   const incomingFails = Math.floor(Number(fails    ?? 0));
   const incomingHp    = Math.floor(Number(aegis_hp ?? 100));
 
-  /* blocks: usa o maior entre o recalculado agora e o salvo no banco */
   const finalBlocks = Math.max(current.blocks, cleanBlocks);
 
-  /* Recalcula score com o blocks final (protegido) */
   const { score: finalScore } = recalculateScore(cleanMissions, finalBlocks);
 
   const payload = {
@@ -229,9 +203,7 @@ app.post('/api/ranking/save', requireAuth, async (req, res) => {
     nick:               String(nick || 'Guardião').slice(0, 30),
     score:              finalScore,
     blocks:             finalBlocks,
-    /* fails só sobe — nunca sobrescreve com valor menor */
     fails:              Math.max(current.fails, incomingFails),
-    /* aegis_hp só cai — nunca sobrescreve com valor maior */
     aegis_hp:           Math.min(current.aegis_hp, incomingHp),
     missions:           cleanMissions.length,
     completed_missions: cleanMissions,
@@ -355,7 +327,7 @@ app.get('/api/ranking/me', requireAuth, async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   POST /api/mission/start
+   POST
 ═══════════════════════════════════════════════════════════ */
 app.post('/api/mission/start', requireAuth, async (req, res) => {
   const missionId = Number(req.body?.mission_id);
@@ -399,7 +371,7 @@ app.post('/api/mission/start', requireAuth, async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════
-   POST /api/mission/complete
+   POST
 ═══════════════════════════════════════════════════════════ */
 app.post('/api/mission/complete', requireAuth, async (req, res) => {
   if (!SUPABASE_SERVICE_KEY) {
@@ -477,7 +449,6 @@ app.post('/api/mission/complete', requireAuth, async (req, res) => {
       nick:               currentRow?.nick || 'Guardião',
       score,
       blocks:             cleanBlocks,
-      /* Preserva fails e aegis_hp do banco — missão não reseta esses valores */
       fails:              currentRow?.fails    ?? 0,
       aegis_hp:           currentRow?.aegis_hp ?? 100,
       missions:           cleanMissions.length,
