@@ -5,7 +5,7 @@
 > Every Guardian who improves this platform defends all others.
 ```
 
-Thank you for considering contributing to ÆGIS. This document explains how to get involved — whether you're fixing a bug, adding a mission, improving the AI tutor, or proposing new attack vectors.
+Thank you for considering contributing to ÆGIS. This document explains how to get involved, whether you're fixing a bug, adding a mission, improving the AI tutor, or proposing new attack vectors.
 
 ---
 
