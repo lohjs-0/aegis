@@ -3,8 +3,8 @@ var XP_PER_MODULE = 100;
 /* ─────────────────────────────────────────────────────────
    CONSTANTES
 ───────────────────────────────────────────────────────── */
-var LOKI_MIN_INTERVAL = 180000;  
-var LOKI_MAX_INTERVAL = 270000;  
+var LOKI_MIN_INTERVAL = 240000;  
+var LOKI_MAX_INTERVAL = 360000;  
 var LOKI_ATTACK_TIMER = 20;
 var XP_LOSS_PER_FAIL  = 40;
 var HP_LOSS_PER_FAIL  = 15;
@@ -254,21 +254,18 @@ var _visibilityHandler = null;
 var _hiddenAt = null;
 
 function _attachVisibilityHandler() {
-  if (_visibilityHandler) return; 
+  if (_visibilityHandler) return;
   _visibilityHandler = function() {
     if (document.hidden) {
-   
       _hiddenAt = Date.now();
       stopLokiScheduler();
       console.log('[estudos] aba oculta — ataques pausados');
     } else {
-    
       var secondsAway = _hiddenAt ? Math.round((Date.now() - _hiddenAt) / 1000) : 0;
       _hiddenAt = null;
       console.log('[estudos] aba visível — retomando após', secondsAway, 's');
       scheduleNextLokiAttack();
 
-      
       if (secondsAway >= 10) {
         _botReactToStudyReturn(secondsAway);
       }
@@ -285,21 +282,34 @@ function _detachVisibilityHandler() {
   _hiddenAt = null;
 }
 
+/* ─────────────────────────────────────────────────────────
+   PONTO 4: Reação dramática ao voltar para os Estudos
+───────────────────────────────────────────────────────── */
 function _botReactToStudyReturn(secondsAway) {
   if (typeof appendMsg !== 'function') return;
 
   if (typeof aegisReactToReturn === 'function') {
     aegisReactToReturn(secondsAway, 0);
-    return;
+  } else {
+    
+    var msgs = [
+      'Voltou, Guardião. Fiquei aqui ' + secondsAway + 's sozinho com o Loki. Ele adorou.',
+      'O Loki ficou circulando enquanto você estava fora. Boa hora pra voltar.',
+      secondsAway > 30
+        ? 'Trinta segundos longe. Sabe quantas credenciais o Loki consegue exfiltrar em trinta segundos?'
+        : 'Pausa rápida. Mas rápida o suficiente pro Loki tentar alguma coisa.',
+      'Presente, Guardião. O sistema se manteve. Dessa vez.',
+    ];
+    var msg = msgs[Math.floor(Math.random() * msgs.length)];
+    setTimeout(function() { appendMsg(msg, 'bot'); }, 500);
   }
 
-  var msgs = [
-    'Voltou, Guardião. O Loki ficou farejando por aqui — mas eu segurei.',
-    'Boa hora pra voltar. O Loki estava circulando. Fique de olho.',
-    'A aba ficou sozinha por ' + secondsAway + ' segundos. Nada passa quando você não está olhando.',
-  ];
-  var msg = msgs[Math.floor(Math.random() * msgs.length)];
-  setTimeout(function() { appendMsg(msg, 'bot'); }, 500);
+  // Loki também comenta a ausência — ficou sozinho esperando
+  if (typeof lokiReactToReturn === 'function' && secondsAway >= 20) {
+    setTimeout(function() {
+      lokiReactToReturn(secondsAway);
+    }, 2500);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -800,7 +810,6 @@ function scheduleNextLokiAttack() {
 }
 
 function triggerLokiAttack() {
-  
   if (document.hidden)                                                   { scheduleNextLokiAttack(); return; }
   if (!STUDY_STATE.activeModuleId || STUDY_STATE.lokiAttackActive)      { scheduleNextLokiAttack(); return; }
   if (window.STATE && window.STATE.modalActive)                         { scheduleNextLokiAttack(); return; }
@@ -818,17 +827,14 @@ function triggerLokiAttack() {
     }
   }
 
-  
   var modKey = STUDY_STATE.activeModuleId;
   if (!STUDY_STATE.usedQuestionIndices[modKey]) {
     STUDY_STATE.usedQuestionIndices[modKey] = [];
   }
   var usedIdx = STUDY_STATE.usedQuestionIndices[modKey];
 
- 
   var available = pool.map(function(q, i) { return { q: q, i: i }; })
     .filter(function(item) { return usedIdx.indexOf(item.i) === -1; });
-
 
   if (available.length === 0) {
     STUDY_STATE.usedQuestionIndices[modKey] = [];
@@ -839,7 +845,6 @@ function triggerLokiAttack() {
   var count = Math.min(1 + Math.floor(Math.random() * 2), shuffledAvailable.length);
   var selected = shuffledAvailable.slice(0, count);
 
-  
   selected.forEach(function(item) { usedIdx.push(item.i); });
   var maxHistory = Math.max(2, Math.floor(pool.length * 0.6));
   if (usedIdx.length > maxHistory) {
@@ -947,7 +952,6 @@ function handleLokiAnswer(selectedIdx) {
 
   document.querySelectorAll('.loki-option').forEach(function(btn) {
     btn.disabled = true;
-   
     var btnText = btn.textContent;
     var isCorrectOption = btnText === q.options[q.correct];
     var isSelectedOption = btnText === q.options[selectedIdx];
@@ -999,7 +1003,7 @@ function handleLokiTimeout() {
     STUDY_STATE.currentQIdx < STUDY_STATE.currentQuestions.length
       ? renderCurrentQuestion()
       : endLokiAttack(false);
-  }, 3200); 
+  }, 3200);
 }
 
 function endLokiAttack(lastCorrect) {
