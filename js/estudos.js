@@ -3,9 +3,9 @@ var XP_PER_MODULE = 100;
 /* ─────────────────────────────────────────────────────────
    CONSTANTES
 ───────────────────────────────────────────────────────── */
-var LOKI_MIN_INTERVAL = 120000;  
-var LOKI_MAX_INTERVAL = 180000;  
-var LOKI_ATTACK_TIMER = 20;     
+var LOKI_MIN_INTERVAL = 180000;  
+var LOKI_MAX_INTERVAL = 270000;  
+var LOKI_ATTACK_TIMER = 20;
 var XP_LOSS_PER_FAIL  = 40;
 var HP_LOSS_PER_FAIL  = 15;
 var HP_GAIN_PER_WIN   = 5;
@@ -31,6 +31,7 @@ var STUDY_STATE = {
   timerBarInterval: null,
   reachedBottom:    false,
   scrollHandler:    null,
+  usedQuestionIndices: {},
 };
 
 
@@ -71,26 +72,11 @@ function loadStudyProgress() {
   injectStudyXpIntoState();
 }
 
-/* ─────────────────────────────────────────────────────────
-   injectStudyXpIntoState  [v6.0 — INTEGRAÇÃO ranking.js v9]
-
-   MUDANÇA v6.0:
-     Após injetar o XP no STATE, dispara "aegis:xp-ready".
-     O ranking.js v9 aguarda esse evento antes de salvar no Supabase,
-     garantindo que o score gravado já inclui o XP dos estudos.
-
-     Isso substitui o padrão antigo de setTimeout(1200ms) no ranking.js.
-     O save manual via saveScoreToRanking() foi removido daqui —
-     o Proxy do STATE detecta a mudança de score e agenda o save
-     automaticamente via debounce (ranking.js v9 / _debouncedSave).
-───────────────────────────────────────────────────────── */
 function injectStudyXpIntoState() {
   if (typeof window.STATE === 'undefined') return;
 
   var completedCount = STUDY_STATE.completedModules.length;
 
-  /* [v6.0] Sempre dispara xp-ready, mesmo sem módulos completos,
-     para não deixar o gate do ranking.js esperando para sempre. */
   if (completedCount === 0) {
     window.dispatchEvent(new CustomEvent('aegis:xp-ready'));
     return;
@@ -113,36 +99,19 @@ function injectStudyXpIntoState() {
     target.blocks = completedCount;
   }
 
-  /* [v6.0] Sinaliza ao ranking.js v9 que o XP está pronto.
-     O save no Supabase ocorrerá agora com o score correto. */
   window.dispatchEvent(new CustomEvent('aegis:xp-ready'));
   console.log('[estudos] aegis:xp-ready disparado ✓ | score:', target.score);
 
-  /* Persiste localmente como camada extra de segurança */
   if (typeof persistStateLocally === 'function') {
     persistStateLocally();
   }
 }
 
-/* ─────────────────────────────────────────────────────────
-   _flushState()  [v6.0 — sem syncRankingScore]
-
-   MUDANÇA v6.0:
-     Removida chamada a syncRankingScore().
-     O Proxy do STATE no ranking.js v9 detecta mudanças em
-     score/blocks/fails/aegisHp e agenda o save automaticamente
-     com debounce de 1200ms. Manter syncRankingScore() aqui
-     causava double-save e potencial gravação de score parcial.
-───────────────────────────────────────────────────────── */
 function _flushState() {
   if (typeof window.updateHUD    === 'function') window.updateHUD();
   if (typeof persistStateLocally === 'function') persistStateLocally();
-  /* syncRankingScore() removido — Proxy do STATE cuida disso */
 }
 
-/* ─────────────────────────────────────────────────────────
-   _estudosGrant — usa _grantXP global se disponível
-───────────────────────────────────────────────────────── */
 function _estudosGrant(opts) {
   if (typeof window._grantXP === 'function') {
     window._grantXP(opts);
@@ -194,14 +163,12 @@ function onModuleCompleted(moduleId) {
   var mod = STUDY_MODULES.find(function(m) { return m.id === moduleId; });
   if (!mod) return;
 
-  /* _estudosGrant muda S.score → Proxy → _debouncedSave automático */
   _estudosGrant({
     xp:     XP_PER_MODULE,
     blocks: 1,
     label:  'estudos:module-complete:' + moduleId,
   });
 
-  /* Mensagem no bot (sem mudança) */
   setTimeout(function() {
     if (typeof appendMsg === 'function') {
       appendMsg(
@@ -265,6 +232,9 @@ function initEstudos() {
   container.appendChild(buildStudyLayout());
   renderModuleList();
   startLokiScheduler();
+
+  _attachVisibilityHandler();
+
   setTimeout(function() {
     if (typeof botReactToSection === 'function') botReactToSection('estudos');
   }, 400);
@@ -276,11 +246,64 @@ function destroyEstudos() {
   detachScrollHandler();
   STUDY_STATE.lokiAttackActive = false;
   STUDY_STATE.activeModuleId   = null;
+
+  _detachVisibilityHandler();
+}
+
+var _visibilityHandler = null;
+var _hiddenAt = null;
+
+function _attachVisibilityHandler() {
+  if (_visibilityHandler) return; 
+  _visibilityHandler = function() {
+    if (document.hidden) {
+   
+      _hiddenAt = Date.now();
+      stopLokiScheduler();
+      console.log('[estudos] aba oculta — ataques pausados');
+    } else {
+    
+      var secondsAway = _hiddenAt ? Math.round((Date.now() - _hiddenAt) / 1000) : 0;
+      _hiddenAt = null;
+      console.log('[estudos] aba visível — retomando após', secondsAway, 's');
+      scheduleNextLokiAttack();
+
+      
+      if (secondsAway >= 10) {
+        _botReactToStudyReturn(secondsAway);
+      }
+    }
+  };
+  document.addEventListener('visibilitychange', _visibilityHandler);
+}
+
+function _detachVisibilityHandler() {
+  if (_visibilityHandler) {
+    document.removeEventListener('visibilitychange', _visibilityHandler);
+    _visibilityHandler = null;
+  }
+  _hiddenAt = null;
+}
+
+function _botReactToStudyReturn(secondsAway) {
+  if (typeof appendMsg !== 'function') return;
+
+  if (typeof aegisReactToReturn === 'function') {
+    aegisReactToReturn(secondsAway, 0);
+    return;
+  }
+
+  var msgs = [
+    'Voltou, Guardião. O Loki ficou farejando por aqui — mas eu segurei.',
+    'Boa hora pra voltar. O Loki estava circulando. Fique de olho.',
+    'A aba ficou sozinha por ' + secondsAway + ' segundos. Nada passa quando você não está olhando.',
+  ];
+  var msg = msgs[Math.floor(Math.random() * msgs.length)];
+  setTimeout(function() { appendMsg(msg, 'bot'); }, 500);
 }
 
 /* ─────────────────────────────────────────────────────────
    detachScrollHandler  [v5.1]
-   Remove scroll E touchmove (iOS Safari)
 ───────────────────────────────────────────────────────── */
 function detachScrollHandler() {
   var panel = document.getElementById('study-content-panel');
@@ -494,9 +517,6 @@ function buildCheckpointHTML(mod) {
   '</div>';
 }
 
-/* ─────────────────────────────────────────────────────────
-   setupScrollToBottomDetector  [v5.1]
-───────────────────────────────────────────────────────── */
 function setupScrollToBottomDetector(mod) {
   var panel = document.getElementById('study-content-panel');
   if (!panel) return;
@@ -506,7 +526,6 @@ function setupScrollToBottomDetector(mod) {
     return;
   }
 
-  /* Fallback: conteúdo menor que o panel → desbloqueia direto */
   if (panel.scrollHeight <= panel.clientHeight + 50) {
     STUDY_STATE.reachedBottom = true;
     activateCheckpointBtn();
@@ -713,10 +732,6 @@ function buildCodeSection(s) {
     '</div></div>';
 }
 
-/* ─────────────────────────────────────────────────────────
-   setupSectionObservers  [v5.1]
-   root: panel (corrige mobile), threshold: 0.2
-───────────────────────────────────────────────────────── */
 function setupSectionObservers(mod) {
   if (!('IntersectionObserver' in window)) return;
 
@@ -779,18 +794,20 @@ function stopLokiScheduler() {
 
 function scheduleNextLokiAttack() {
   stopLokiScheduler();
+  if (document.hidden) return;
   var delay = LOKI_MIN_INTERVAL + Math.random() * (LOKI_MAX_INTERVAL - LOKI_MIN_INTERVAL);
   STUDY_STATE.lokiTimer = setTimeout(triggerLokiAttack, delay);
 }
 
 function triggerLokiAttack() {
-  if (!STUDY_STATE.activeModuleId || STUDY_STATE.lokiAttackActive) { scheduleNextLokiAttack(); return; }
-  if (window.STATE && window.STATE.modalActive)                    { scheduleNextLokiAttack(); return; }
+  
+  if (document.hidden)                                                   { scheduleNextLokiAttack(); return; }
+  if (!STUDY_STATE.activeModuleId || STUDY_STATE.lokiAttackActive)      { scheduleNextLokiAttack(); return; }
+  if (window.STATE && window.STATE.modalActive)                         { scheduleNextLokiAttack(); return; }
 
   var mod = STUDY_MODULES.find(function(m) { return m.id === STUDY_STATE.activeModuleId; });
-  if (!mod || !mod.lokiQuestions || !mod.lokiQuestions.length)    { scheduleNextLokiAttack(); return; }
-
-  if (!mod.unlockAfter) { scheduleNextLokiAttack(); return; }
+  if (!mod || !mod.lokiQuestions || !mod.lokiQuestions.length)          { scheduleNextLokiAttack(); return; }
+  if (!mod.unlockAfter)                                                  { scheduleNextLokiAttack(); return; }
 
   var currentIdx = STUDY_MODULES.findIndex(function(m) { return m.id === mod.id; });
   var pool = mod.lokiQuestions.slice();
@@ -801,10 +818,35 @@ function triggerLokiAttack() {
     }
   }
 
-  var available = shuffleArray(pool);
-  var count = Math.min(1 + Math.floor(Math.random() * 3), available.length);
+  
+  var modKey = STUDY_STATE.activeModuleId;
+  if (!STUDY_STATE.usedQuestionIndices[modKey]) {
+    STUDY_STATE.usedQuestionIndices[modKey] = [];
+  }
+  var usedIdx = STUDY_STATE.usedQuestionIndices[modKey];
 
-  STUDY_STATE.currentQuestions = available.slice(0, count);
+ 
+  var available = pool.map(function(q, i) { return { q: q, i: i }; })
+    .filter(function(item) { return usedIdx.indexOf(item.i) === -1; });
+
+
+  if (available.length === 0) {
+    STUDY_STATE.usedQuestionIndices[modKey] = [];
+    available = pool.map(function(q, i) { return { q: q, i: i }; });
+  }
+
+  var shuffledAvailable = shuffleArray(available.slice());
+  var count = Math.min(1 + Math.floor(Math.random() * 2), shuffledAvailable.length);
+  var selected = shuffledAvailable.slice(0, count);
+
+  
+  selected.forEach(function(item) { usedIdx.push(item.i); });
+  var maxHistory = Math.max(2, Math.floor(pool.length * 0.6));
+  if (usedIdx.length > maxHistory) {
+    STUDY_STATE.usedQuestionIndices[modKey] = usedIdx.slice(usedIdx.length - maxHistory);
+  }
+
+  STUDY_STATE.currentQuestions = selected.map(function(item) { return item.q; });
   STUDY_STATE.currentQIdx      = 0;
   STUDY_STATE.lokiAttackActive = true;
   if (window.STATE) window.STATE.modalActive = true;
@@ -872,10 +914,18 @@ function renderCurrentQuestion() {
   var oEl = document.getElementById('loki-options');
   if (oEl) {
     oEl.innerHTML = '';
-    q.options.forEach(function(opt, idx) {
+
+    var optionsWithIdx = q.options.map(function(opt, idx) {
+      return { text: opt, originalIdx: idx };
+    });
+    var shuffledOptions = shuffleArray(optionsWithIdx.slice());
+
+    shuffledOptions.forEach(function(item) {
       var btn = el('button', 'loki-option');
-      btn.textContent = opt;
-      btn.addEventListener('click', function() { handleLokiAnswer(idx); });
+      btn.textContent = item.text;
+      btn.addEventListener('click', (function(origIdx) {
+        return function() { handleLokiAnswer(origIdx); };
+      })(item.originalIdx));
       oEl.appendChild(btn);
     });
   }
@@ -895,10 +945,14 @@ function handleLokiAnswer(selectedIdx) {
   var q       = STUDY_STATE.currentQuestions[STUDY_STATE.currentQIdx];
   var correct = selectedIdx === q.correct;
 
-  document.querySelectorAll('.loki-option').forEach(function(btn, i) {
+  document.querySelectorAll('.loki-option').forEach(function(btn) {
     btn.disabled = true;
-    if (i === q.correct)               btn.classList.add('correct');
-    if (i === selectedIdx && !correct) btn.classList.add('wrong');
+   
+    var btnText = btn.textContent;
+    var isCorrectOption = btnText === q.options[q.correct];
+    var isSelectedOption = btnText === q.options[selectedIdx];
+    if (isCorrectOption)                    btn.classList.add('correct');
+    if (isSelectedOption && !correct)       btn.classList.add('wrong');
   });
 
   var rEl = document.getElementById('loki-result');
@@ -917,27 +971,35 @@ function handleLokiAnswer(selectedIdx) {
     STUDY_STATE.currentQIdx < STUDY_STATE.currentQuestions.length
       ? renderCurrentQuestion()
       : endLokiAttack(correct);
-  }, 2800);
+  }, 3200);
 }
 
 function handleLokiTimeout() {
   stopQuestionTimer();
   applyLokiPenalty();
 
+  var q   = STUDY_STATE.currentQuestions[STUDY_STATE.currentQIdx];
   var rEl = document.getElementById('loki-result');
   if (rEl) {
     rEl.style.display = 'block';
     rEl.className = 'loki-result fail';
-    rEl.innerHTML = '<span class="lr-icon svg-icon">' + SVGI.alertTri + '</span> <strong>Tempo esgotado.</strong> No mundo real: comprometimento total.';
+    var explanation = (q && q.explanation) ? escapeHTML(q.explanation) : '';
+    rEl.innerHTML = '<span class="lr-icon svg-icon">' + SVGI.alertTri + '</span> <strong>Tempo esgotado.</strong> No mundo real: comprometimento total.' +
+      (explanation ? '<br><span class="lr-explanation">' + explanation + '</span>' : '');
   }
-  document.querySelectorAll('.loki-option').forEach(function(btn) { btn.disabled = true; });
+  document.querySelectorAll('.loki-option').forEach(function(btn) {
+    btn.disabled = true;
+    if (q && btn.textContent === q.options[q.correct]) {
+      btn.classList.add('correct');
+    }
+  });
 
   setTimeout(function() {
     STUDY_STATE.currentQIdx++;
     STUDY_STATE.currentQIdx < STUDY_STATE.currentQuestions.length
       ? renderCurrentQuestion()
       : endLokiAttack(false);
-  }, 2800);
+  }, 3200); 
 }
 
 function endLokiAttack(lastCorrect) {
