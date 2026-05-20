@@ -88,7 +88,6 @@ function _attachMissionVisibilityHandler() {
 
       console.log('[main] aba visível — retomando após', secondsAway, 's');
 
-      // ── FIX: só retomar se estiver em missão ou estudos ──
       var missionActive = (typeof MISSION_STATE !== 'undefined')
         && MISSION_STATE.activeMissionId != null;
 
@@ -250,7 +249,6 @@ function navigate(section) {
   const navEl = document.querySelector(`[data-section="${section}"]`);
   if (navEl) navEl.classList.add('active');
 
-  // ── FIX: parar ataques ao sair de missão/estudos ──
   const prevSection = window.STATE.currentSection;
   if (_isAttackSection(prevSection) && !_isAttackSection(section)) {
     if (typeof stopLokiAttacks === 'function') stopLokiAttacks();
@@ -260,7 +258,6 @@ function navigate(section) {
     }
     console.log('[main] saindo de', prevSection, '→ ataques parados');
   }
-  // ── fim fix ──
 
   window.STATE.currentSection = section;
 
@@ -277,7 +274,6 @@ function navigate(section) {
   else if (section === 'estudos')    call(initEstudos);
   else if (section === 'simulados')  call(initSimulados);
 
-  // Limpar lokiTimeout legado ao sair de missões (fallback)
   const S = window.STATE;
   if (S.lokiTimeout && !_isAttackSection(section)) {
     clearTimeout(S.lokiTimeout);
@@ -474,7 +470,6 @@ const LOKI_LOSES = [
 function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function scheduleAttack() {
-  // ── FIX: só agendar se estiver na seção correta ──
   if (!_isAttackSection()) return;
 
   const S = window.STATE;
@@ -488,7 +483,9 @@ function launchAttack() {
   if (S.modalActive) { scheduleAttack(); return; }
   if (!lokiCanAttack()) return;
 
-  // ── FIX: checar seção antes de disparar ──
+  // Estudos tem seu próprio scheduler — main.js não interfere
+  if (S.currentSection === 'estudos') return;
+
   if (!_isAttackSection()) return;
 
   const attacks = getAttacks();
@@ -670,7 +667,6 @@ function closeLokiModal() {
   clearInterval(window.STATE.timerInterval);
   recoverAegis();
   if (typeof persistStateLocally === 'function') persistStateLocally();
-  // ── FIX: só reagendar se ainda estiver na seção correta ──
   if (_isAttackSection() && lokiCanAttack()) scheduleAttack();
 }
 
@@ -1100,7 +1096,6 @@ function reviveAegis() {
 
   appendMsg(`<span style="color:var(--yellow)">⟳ Sistema reanimado.</span> ÆGIS online com 50% de integridade. <span class="hl">Não cometa os mesmos erros.</span>`, 'bot');
 
-  // ── FIX: só retomar ataques se estiver na seção correta ──
   if (_isAttackSection() && typeof startLokiAttacks === 'function') startLokiAttacks();
   updateRechargeBtn();
 }
@@ -1243,7 +1238,6 @@ window.addEventListener('load', () => {
     setTimeout(() => call(refreshMissionsList), 200);
   });
 
-  /* Sync de displays a cada segundo */
   setInterval(() => {
     const S = window.STATE;
     if (!S) return;
