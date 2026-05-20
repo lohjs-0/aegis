@@ -46,6 +46,99 @@ function call(fn, ...args) {
   if (typeof fn === 'function') return fn(...args);
 }
 
+/* ═══════════════════════════════════════════════════════════
+   PONTO 4: Page Visibility API — pausar ataques de missões
+═══════════════════════════════════════════════════════════ */
+var _missionHiddenAt = null;
+var _missionVisibilityHandler = null;
+
+function _attachMissionVisibilityHandler() {
+  if (_missionVisibilityHandler) return;
+
+  _missionVisibilityHandler = function() {
+    var S = window.STATE;
+
+    if (document.hidden) {
+    
+      _missionHiddenAt = Date.now();
+
+      if (S.lokiTimeout) {
+        clearTimeout(S.lokiTimeout);
+        S.lokiTimeout = null;
+      }
+
+      if (typeof stopLokiAttacks === 'function') {
+        stopLokiAttacks();
+      }
+
+      console.log('[main] aba oculta — ataques de missão pausados');
+
+    } else {
+      // Voltou para a aba — retomar
+      var secondsAway = _missionHiddenAt
+        ? Math.round((Date.now() - _missionHiddenAt) / 1000)
+        : 0;
+      _missionHiddenAt = null;
+
+      console.log('[main] aba visível — retomando após', secondsAway, 's');
+
+      
+      var missionActive = (typeof MISSION_STATE !== 'undefined')
+        && MISSION_STATE.activeMissionId != null;
+
+      if (missionActive) {
+        if (typeof startLokiAttacks === 'function') {
+          startLokiAttacks();
+        } else if (typeof lokiCanAttack === 'function' && lokiCanAttack()) {
+          scheduleAttack();
+        }
+      }
+
+      
+      if (secondsAway >= 10) {
+        _botReactToMissionReturn(secondsAway);
+      }
+    }
+  };
+
+  document.addEventListener('visibilitychange', _missionVisibilityHandler);
+}
+
+function _detachMissionVisibilityHandler() {
+  if (_missionVisibilityHandler) {
+    document.removeEventListener('visibilitychange', _missionVisibilityHandler);
+    _missionVisibilityHandler = null;
+  }
+  _missionHiddenAt = null;
+}
+
+function _botReactToMissionReturn(secondsAway) {
+  if (typeof appendMsg !== 'function') return;
+
+  
+  if (typeof aegisReactToReturn === 'function') {
+    aegisReactToReturn(secondsAway, 0);
+  } else {
+    var msgs = [
+      'Voltou, Guardião. O Loki ficou aqui ' + secondsAway + 's sem você. Ele adorou.',
+      'Bem-vindo de volta. O Loki tava farejando. Sorte que não achou brecha dessa vez.',
+      secondsAway > 60
+        ? 'Um minuto fora. Sabe o que acontece com sistemas sem monitoramento por um minuto? Pergunte pro Loki.'
+        : 'Voltou. Bom. O Loki tava ficando ansioso sem o Guardião por aqui.',
+    ];
+    setTimeout(function() {
+      appendMsg(msgs[Math.floor(Math.random() * msgs.length)], 'bot');
+    }, 500);
+  }
+
+  // Loki também comenta — ficou sozinho esperando
+  if (typeof lokiReactToReturn === 'function' && secondsAway >= 30) {
+    setTimeout(function() {
+      lokiReactToReturn(secondsAway);
+    }, 2800);
+  }
+}
+
 /* ─── HUD UPDATE ─────────────────────────────────────────── */
 function updateHUD() {
   const S = window.STATE || STATE;
@@ -1110,6 +1203,9 @@ window.addEventListener('load', () => {
   requestAnimationFrame(() => {
     updateHUD();
     navigate('home');
+
+    
+    _attachMissionVisibilityHandler();
 
     setTimeout(initBot, 800);
 
