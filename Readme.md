@@ -1,4 +1,3 @@
-
 <div align="center">
 
   <p align="center">
@@ -7,11 +6,13 @@
 
 **Gamified real-time serverless security training platform.**
 
-![JavaScript](https://img.shields.io/badge/JavaScript-00ff41?style=for-the-badge&logo=javascript&logoColor=000000)
-![HTML5](https://img.shields.io/badge/HTML5-000000?style=for-the-badge&logo=html5&logoColor=00ff41)
-![CSS3](https://img.shields.io/badge/CSS3-00ff41?style=for-the-badge&logo=css3&logoColor=000000)
-![Supabase](https://img.shields.io/badge/Supabase-000000?style=for-the-badge&logo=supabase&logoColor=00ff41)
-![MIT License](https://img.shields.io/badge/MIT_License-00ff41?style=for-the-badge&logoColor=000000)
+![JavaScript](https://img.shields.io/badge/JavaScript-4a9068?style=for-the-badge&logo=javascript&logoColor=000000)
+![HTML5](https://img.shields.io/badge/HTML5-000000?style=for-the-badge&logo=html5&logoColor=4a9068)
+![CSS3](https://img.shields.io/badge/CSS3-4a9068?style=for-the-badge&logo=css3&logoColor=000000)
+![Supabase](https://img.shields.io/badge/Supabase-000000?style=for-the-badge&logo=supabase&logoColor=4a9068)
+![MIT License](https://img.shields.io/badge/MIT_License-4a9068?style=for-the-badge&logo=opensourceinitiative&logoColor=000000)
+[![Contributing](https://img.shields.io/badge/Contributing-000000?style=for-the-badge&logo=github&logoColor=4a9068)](CONTRIBUTING.md)
+[![Code of Conduct](https://img.shields.io/badge/Code_of_Conduct-4a9068?style=for-the-badge&logo=contributorcovenant&logoColor=000000)](CODE_OF_CONDUCT.md)
 
 </div>
 
@@ -212,10 +213,9 @@ Frontend   →  HTML + CSS + Vanilla JavaScript
 Backend    →  Node.js + Express
 Database   →  PostgreSQL (Supabase)
 Auth       →  Supabase Auth
-Deploy     →  Netlify / Vercel / GitHub Pages
+Deploy     →  Railway
 Build      →  No bundlers / zero dependencies
 ```
-
 
 ---
 
@@ -236,6 +236,10 @@ nodemon       ^3.1.0    →  Dev auto-reload
 ```bash
 # install dependencies
 npm install
+
+# configure environment
+cp .env.example .env
+# fill in MISTRAL_KEY, SUPABASE_URL, SUPABASE_KEY
 
 # run dev server
 npm run dev
@@ -293,15 +297,26 @@ console.log(window.STATE);
 - [x] Mobile responsive layout
 - [x] Guardian login screen
 
-**Planned**
+For the full roadmap including Season 01.5 and Season 02 planned features, see [ROADMAP.md](ROADMAP.md).
 
-- [ ] Full simulation question bank
-- [ ] PvP guardian mode
-- [ ] Offline PWA support
-- [ ] Seasonal events
-- [ ] Cooperative defense mode
-- [ ] Community missions
-- [ ] Season 02
+---
+
+## `// Contributing`
+
+Contributions are welcome. ÆGIS is open source and community-driven.
+
+Before submitting a pull request, please read:
+
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to set up the project, branch conventions, and PR guidelines
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — expected behavior in all project spaces
+
+```
+→ fork the repo
+→ create a feature branch
+→ open a pull request with a clear description
+```
+
+All contributions — code, documentation, missions, translations — are appreciated.
 
 ---
 
