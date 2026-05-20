@@ -47,7 +47,15 @@ function call(fn, ...args) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   PONTO 4: Page Visibility API — pausar ataques de missões
+   HELPER: seções que permitem ataques Loki
+═══════════════════════════════════════════════════════════ */
+function _isAttackSection(section) {
+  const sec = section || window.STATE?.currentSection;
+  return sec === 'missoes' || sec === 'estudos';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE VISIBILITY — pausar/retomar ataques
 ═══════════════════════════════════════════════════════════ */
 var _missionHiddenAt = null;
 var _missionVisibilityHandler = null;
@@ -59,7 +67,6 @@ function _attachMissionVisibilityHandler() {
     var S = window.STATE;
 
     if (document.hidden) {
-    
       _missionHiddenAt = Date.now();
 
       if (S.lokiTimeout) {
@@ -71,10 +78,9 @@ function _attachMissionVisibilityHandler() {
         stopLokiAttacks();
       }
 
-      console.log('[main] aba oculta — ataques de missão pausados');
+      console.log('[main] aba oculta — ataques pausados');
 
     } else {
-      // Voltou para a aba — retomar
       var secondsAway = _missionHiddenAt
         ? Math.round((Date.now() - _missionHiddenAt) / 1000)
         : 0;
@@ -82,11 +88,11 @@ function _attachMissionVisibilityHandler() {
 
       console.log('[main] aba visível — retomando após', secondsAway, 's');
 
-      
+      // ── FIX: só retomar se estiver em missão ou estudos ──
       var missionActive = (typeof MISSION_STATE !== 'undefined')
         && MISSION_STATE.activeMissionId != null;
 
-      if (missionActive) {
+      if (missionActive && _isAttackSection()) {
         if (typeof startLokiAttacks === 'function') {
           startLokiAttacks();
         } else if (typeof lokiCanAttack === 'function' && lokiCanAttack()) {
@@ -94,7 +100,6 @@ function _attachMissionVisibilityHandler() {
         }
       }
 
-      
       if (secondsAway >= 10) {
         _botReactToMissionReturn(secondsAway);
       }
@@ -115,7 +120,6 @@ function _detachMissionVisibilityHandler() {
 function _botReactToMissionReturn(secondsAway) {
   if (typeof appendMsg !== 'function') return;
 
-  
   if (typeof aegisReactToReturn === 'function') {
     aegisReactToReturn(secondsAway, 0);
   } else {
@@ -131,7 +135,6 @@ function _botReactToMissionReturn(secondsAway) {
     }, 500);
   }
 
-  // Loki também comenta — ficou sozinho esperando
   if (typeof lokiReactToReturn === 'function' && secondsAway >= 30) {
     setTimeout(function() {
       lokiReactToReturn(secondsAway);
@@ -247,6 +250,18 @@ function navigate(section) {
   const navEl = document.querySelector(`[data-section="${section}"]`);
   if (navEl) navEl.classList.add('active');
 
+  // ── FIX: parar ataques ao sair de missão/estudos ──
+  const prevSection = window.STATE.currentSection;
+  if (_isAttackSection(prevSection) && !_isAttackSection(section)) {
+    if (typeof stopLokiAttacks === 'function') stopLokiAttacks();
+    if (window.STATE.lokiTimeout) {
+      clearTimeout(window.STATE.lokiTimeout);
+      window.STATE.lokiTimeout = null;
+    }
+    console.log('[main] saindo de', prevSection, '→ ataques parados');
+  }
+  // ── fim fix ──
+
   window.STATE.currentSection = section;
 
   const crumb = document.getElementById('breadcrumb-section');
@@ -262,8 +277,9 @@ function navigate(section) {
   else if (section === 'estudos')    call(initEstudos);
   else if (section === 'simulados')  call(initSimulados);
 
+  // Limpar lokiTimeout legado ao sair de missões (fallback)
   const S = window.STATE;
-  if (S.lokiTimeout && section !== 'missoes') {
+  if (S.lokiTimeout && !_isAttackSection(section)) {
     clearTimeout(S.lokiTimeout);
     S.lokiTimeout = null;
   }
@@ -425,7 +441,7 @@ function initProgresso() {
   }, 300);
 }
 
-/* ─── LOKI ATTACK SYSTEM ─────────────────────────────────── */
+/* ─── LOKI ATTACK SYSTEM (legado — missões sem MISSION_STATE) */
 function getAttacks() {
   if (typeof ATTACKS !== 'undefined' && ATTACKS.length) return ATTACKS;
   return [{
@@ -458,6 +474,9 @@ const LOKI_LOSES = [
 function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
 function scheduleAttack() {
+  // ── FIX: só agendar se estiver na seção correta ──
+  if (!_isAttackSection()) return;
+
   const S = window.STATE;
   if (S.lokiTimeout) { clearTimeout(S.lokiTimeout); S.lokiTimeout = null; }
   const delay = Math.max(9000, 22000 - (S.lokiLevel - 1) * 3500) + Math.random() * 4000;
@@ -468,6 +487,10 @@ function launchAttack() {
   const S = window.STATE;
   if (S.modalActive) { scheduleAttack(); return; }
   if (!lokiCanAttack()) return;
+
+  // ── FIX: checar seção antes de disparar ──
+  if (!_isAttackSection()) return;
+
   const attacks = getAttacks();
   const atk     = attacks[atkIndex % attacks.length];
   atkIndex++;
@@ -647,7 +670,8 @@ function closeLokiModal() {
   clearInterval(window.STATE.timerInterval);
   recoverAegis();
   if (typeof persistStateLocally === 'function') persistStateLocally();
-  if (lokiCanAttack()) scheduleAttack();
+  // ── FIX: só reagendar se ainda estiver na seção correta ──
+  if (_isAttackSection() && lokiCanAttack()) scheduleAttack();
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1076,7 +1100,8 @@ function reviveAegis() {
 
   appendMsg(`<span style="color:var(--yellow)">⟳ Sistema reanimado.</span> ÆGIS online com 50% de integridade. <span class="hl">Não cometa os mesmos erros.</span>`, 'bot');
 
-  if (lokiCanAttack() && typeof startLokiAttacks === 'function') startLokiAttacks();
+  // ── FIX: só retomar ataques se estiver na seção correta ──
+  if (_isAttackSection() && typeof startLokiAttacks === 'function') startLokiAttacks();
   updateRechargeBtn();
 }
 
@@ -1204,7 +1229,6 @@ window.addEventListener('load', () => {
     updateHUD();
     navigate('home');
 
-    
     _attachMissionVisibilityHandler();
 
     setTimeout(initBot, 800);
