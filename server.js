@@ -7,11 +7,16 @@ const crypto  = require('crypto');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
-const SUPABASE_URL         = process.env.SUPABASE_URL || 'https://feyuowaurlwctogamzmk.supabase.co';
+const SUPABASE_URL         = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SUPABASE_ANON_KEY    = process.env.SUPABASE_ANON_KEY;
 const MISTRAL_KEY          = process.env.MISTRAL_KEY;
 
+if (!SUPABASE_URL) {
+  console.error('\n[server] FATAL: SUPABASE_URL não configurada.');
+  console.error('[server] Copie .env.example para .env e preencha as variáveis.\n');
+  process.exit(1);
+}
 /* ═══════════════════════════════════════════════════════════
    TABELA DE VERDADE DO JOGO
 ═══════════════════════════════════════════════════════════ */
