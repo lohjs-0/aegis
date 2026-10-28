@@ -1,20 +1,4 @@
-<div align="center">
 
-  <p align="center">
-  <img src="/public/banner.png" alt="Banner" width="100%">
-</p>
-
-**Gamified real-time serverless security training platform.**
-
-![JavaScript](https://img.shields.io/badge/JavaScript-4a9068?style=for-the-badge&logo=javascript&logoColor=000000)
-![HTML5](https://img.shields.io/badge/HTML5-000000?style=for-the-badge&logo=html5&logoColor=4a9068)
-![CSS3](https://img.shields.io/badge/CSS3-4a9068?style=for-the-badge&logo=css3&logoColor=000000)
-![Supabase](https://img.shields.io/badge/Supabase-000000?style=for-the-badge&logo=supabase&logoColor=4a9068)
-![MIT License](https://img.shields.io/badge/MIT_License-4a9068?style=for-the-badge&logo=opensourceinitiative&logoColor=000000)
-[![Contributing](https://img.shields.io/badge/Contributing-000000?style=for-the-badge&logo=github&logoColor=4a9068)](CONTRIBUTING.md)
-[![Code of Conduct](https://img.shields.io/badge/Code_of_Conduct-4a9068?style=for-the-badge&logo=contributorcovenant&logoColor=000000)](CODE_OF_CONDUCT.md)
-
-</div>
 
 ---
 
